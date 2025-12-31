@@ -1,0 +1,6 @@
+@Effuse.Server_HostAddress = http://localhost:5153
+
+GET {{Effuse.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
