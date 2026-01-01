@@ -1,4 +1,4 @@
-namespace Effuse.Auth.Integrations;
+namespace Effuse.Auth.Integrations.Props;
 
 public struct CreateUserProps
 {
