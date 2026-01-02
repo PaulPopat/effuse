@@ -4,7 +4,7 @@ public class UserRow
 {
     public const string Table = "users";
 
-    public required Guid id { get; set; }
+    public required string id { get; set; }
     public required string username { get; set; }
     public required string email { get; set; }
     public required string hashed_password { get; set; }

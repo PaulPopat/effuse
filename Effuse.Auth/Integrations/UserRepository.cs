@@ -24,7 +24,7 @@ public class UserRepository
 
         await db.Query(StagedUserRow.Table).InsertAsync(new StagedUserRow
         {
-            id = id,
+            id = id.ToString(),
             email = email
         });
 
@@ -36,6 +36,7 @@ public class UserRepository
         {
             Subject = env.VerificationEmailSubject,
             Body = messageBuilder.ToString(),
+            IsBodyHtml = true,
         };
 
         client.Send(message);
@@ -45,7 +46,7 @@ public class UserRepository
     {
         var stagingResult = await db.Query(StagedUserRow.Table).Select("*").Where("email", props.Email).GetAsync<StagedUserRow>();
         var staged = stagingResult.First();
-        if (staged == null || staged.id != props.Verification)
+        if (staged == null || Guid.Parse(staged.id) != props.Verification)
         {
             throw new UnauthorisedError("CreateUser", "InvalidVerification");
         }
@@ -68,7 +69,7 @@ public class UserRepository
 
         await db.Query(UserRow.Table).InsertAsync(new UserRow
         {
-            id = id,
+            id = id.ToString(),
             username = props.Username,
             email = props.Email,
             hashed_password = hashed_password,
@@ -97,7 +98,7 @@ public class UserRepository
         var row = entries.Single();
         return new
         (
-            id: row.id,
+            id: Guid.Parse(row.id),
             username: row.username,
             email: row.email,
             created_on: row.created_on,
