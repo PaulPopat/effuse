@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Effuse.Auth.Integrations;
 
 public class Env
@@ -7,7 +9,15 @@ public class Env
         return Environment.GetEnvironmentVariable(name) ?? throw new Exception($"{name} is required");
     }
 
-    public string EmailFrom => GetEnvironmentVariable("NOTIFICATION_EMAIL_FROM");
-    public string VerificationEmailSubject => GetEnvironmentVariable("VERIFICATION_EMAIL_SUBJECT");
-    public string VerificationEmailBody => GetEnvironmentVariable("VERIFICATION_EMAIL_BODY");
+    private static string GetAssetFile(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream(name) ?? throw new Exception($"Missing asset file {name}");
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+
+    public string EmailFrom => GetEnvironmentVariable("SMTP_EMAIL_FROM");
+    public string VerificationEmailSubject => GetAssetFile("./Assets/VerificationEmailSubject.txt");
+    public string VerificationEmailBody => GetAssetFile("./Assets/VerificationEmailBody.html");
 }

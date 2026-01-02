@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/devcontainers/dotnet:1-8.0-bookworm
+ENV VERIFICATION_EMAIL_SUBJECT="Verify your email address"
+ENV VERIFICATION_EMAIL_BODY="Verify your email address $TOKEN"
+
+WORKDIR /app
+
+COPY . .

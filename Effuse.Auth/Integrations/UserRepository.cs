@@ -30,6 +30,7 @@ public class UserRepository
 
         var messageBuilder = new StringBuilder(env.VerificationEmailBody);
         messageBuilder.Replace("$TOKEN", id.ToString());
+        messageBuilder.Replace("$EMAIL", email);
 
         var message = new MailMessage(env.EmailFrom, email)
         {
