@@ -9,3 +9,4 @@ services:
       - ../:/app:cached
     command: sleep infinity
     user: root
+    network_mode: host

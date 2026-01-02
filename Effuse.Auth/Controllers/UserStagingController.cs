@@ -9,7 +9,7 @@ namespace Effuse.Auth.Controllers;
 public class UserStagingController(IUserRepository userRepository) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> PostUserStaging([FromBody] PostUserModel model)
+    public async Task<IActionResult> PostUserStaging([FromBody] PostUserStagingModel model)
     {
         await userRepository.StageUser(model.Email);
         return Created();

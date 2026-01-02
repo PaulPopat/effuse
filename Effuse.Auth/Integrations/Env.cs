@@ -4,7 +4,7 @@ namespace Effuse.Auth.Integrations;
 
 public class Env
 {
-    private static string GetEnvironmentVariable(string name)
+    public static string GetEnvironmentVariable(string name)
     {
         return Environment.GetEnvironmentVariable(name) ?? throw new Exception($"{name} is required");
     }
@@ -18,6 +18,6 @@ public class Env
     }
 
     public string EmailFrom => GetEnvironmentVariable("SMTP_EMAIL_FROM");
-    public string VerificationEmailSubject => GetAssetFile("./Assets/VerificationEmailSubject.txt");
-    public string VerificationEmailBody => GetAssetFile("./Assets/VerificationEmailBody.html");
+    public string VerificationEmailSubject => GetAssetFile("Effuse.Auth.Assets.VerificationEmailSubject.txt");
+    public string VerificationEmailBody => GetAssetFile("Effuse.Auth.Assets.VerificationEmailBody.html");
 }

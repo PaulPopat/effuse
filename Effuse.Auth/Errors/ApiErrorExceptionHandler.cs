@@ -7,7 +7,7 @@ public class ApiErrorExceptionHandler : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        if (exception is not ApiError error)
+        if (exception is not IApiError error)
         {
             return false;
         }
