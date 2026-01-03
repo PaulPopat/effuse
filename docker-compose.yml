@@ -1,9 +1,0 @@
-services:
-  maildev:
-    image: maildev/maildev
-    ports:
-      - 1080:1080
-      - 1025:1025
-    environment:
-      MAILDEV_OUTGOING_USER: test_user
-      MAILDEV_OUTGOING_PASS: test_password

@@ -40,7 +40,7 @@
         {
             "label": "Reset Database",
             "type": "shell",
-            "command": "npm run migrate:sqlite:clear && npm run migrate:sqlite:latest",
+            "command": "npm run migrate:latest",
             "options": {
                 "cwd": "${workspaceFolder}/Effuse.DatabaseMigration"
             }

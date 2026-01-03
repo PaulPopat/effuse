@@ -20,7 +20,6 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
-            "envFile": "${workspaceFolder}/Effuse.Auth/.env",
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }

@@ -1,4 +1,4 @@
-namespace Effuse.Auth.ControllerModels;
+namespace Effuse.Auth.Controllers.Models;
 
 public struct PostUserModel
 {

@@ -9,4 +9,31 @@ services:
       - ../:/app:cached
     command: sleep infinity
     user: root
-    network_mode: host
+    environment:
+      SMTP_EMAIL_FROM: account@effuse.chat
+      SMTP_HOST: maildev
+      SMTP_PORT: "1025"
+      SMTP_USERNAME: test_user
+      SMTP_PASSWORD: test_password
+
+      DATABASE_PROVIDER: postgres
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: effuse
+      POSTGRES_PASSWORD: test_database
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+    environment:
+      MAILDEV_OUTGOING_USER: test_user
+      MAILDEV_OUTGOING_PASS: test_password
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: effuse
+      POSTGRES_PASSWORD: test_database

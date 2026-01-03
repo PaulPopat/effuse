@@ -1,4 +1,4 @@
-using Effuse.Auth.ControllerModels;
+using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Integrations;
 using Microsoft.AspNetCore.Mvc;
 

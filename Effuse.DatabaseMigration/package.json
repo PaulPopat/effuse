@@ -6,7 +6,6 @@
     "pg": "^8.16.3"
   },
   "scripts": {
-    "migrate:sqlite:latest": "knex migrate:latest --env sqlite",
-    "migrate:sqlite:clear": "rm /appdata/database.sqlite"
+    "migrate:latest": "knex migrate:latest --env $DATABASE_PROVIDER"
   }
 }
