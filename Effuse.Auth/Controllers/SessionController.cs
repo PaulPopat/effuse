@@ -10,27 +10,39 @@ namespace Effuse.Auth.Controllers;
 [Route("sessions")]
 public class SessionController(IUserRepository userRepository, ISessionRepository sessionRepository) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> PostSessionAsync([FromBody] PostSessionModel model)
+    private object CreateSessionResponse(User user)
     {
-        var user = await userRepository.FindUser(model.UsernameOrEmail, model.Password);
-        return Ok(new
+        return new
         {
             AccessToken = sessionRepository.CreateSession(user, SessionPermission.Admin, 120),
             RefreshToken = sessionRepository.CreateSession(user, SessionPermission.Refresh, 60 * 48),
             ServerToken = sessionRepository.CreateSession(user, SessionPermission.ReadUserId, 120),
             Expires = DateTime.UtcNow.AddMinutes(120).ToString("o", CultureInfo.InvariantCulture),
             TokenType = "Bearer",
-        });
+        };
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostSessionAsync([FromBody] PostSessionModel model)
+    {
+        var user = await userRepository.FindUser(model.UsernameOrEmail, model.Password);
+        return Ok(CreateSessionResponse(user));
     }
 
     [HttpGet("current")]
     public async Task<IActionResult> GetCurrentSessionAsync()
     {
-        var session = await sessionRepository.GetCurrentSession();
+        var session = await sessionRepository.GetIdentitySession();
         return Ok(new
         {
             UserId = session.User.Id.ToString(),
         });
+    }
+
+    [HttpGet("refresh")]
+    public async Task<IActionResult> GetRefreshSessionAsync()
+    {
+        var session = await sessionRepository.GetRefreshSession();
+        return Ok(CreateSessionResponse(session.User));
     }
 }

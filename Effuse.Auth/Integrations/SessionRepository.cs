@@ -57,13 +57,34 @@ public class SessionRepository(Env env, IUserRepository userRepository, IHttpCon
         return new(user, exp, permission);
     }
 
-    public async Task<Session> GetCurrentSession()
+    private async Task<Session> GetSessionOfType(SessionPermission sessionPermission)
     {
-        var request = httpContextAccessor.HttpContext?.Request;
-        if (request == null) throw new UnauthorisedError("GetCurrentSession", "InvalidRequest");
+        var request = (httpContextAccessor.HttpContext?.Request)
+            ?? throw new UnauthorisedError("GetCurrentSession", "InvalidRequest");
         var token = (request.Headers.Authorization.Single()?.Split(' ')[1])
             ?? throw new UnauthorisedError("GetCurrentSession", "InvalidToken");
 
-        return await ParseSession(token);
+        var result = await ParseSession(token);
+        if (result.Permission != sessionPermission)
+        {
+            throw new UnauthorisedError("GetCurrentSession", "InvalidPermissions");
+        }
+
+        return result;
+    }
+
+    public async Task<Session> GetCurrentSession()
+    {
+        return await GetSessionOfType(SessionPermission.Admin);
+    }
+
+    public async Task<Session> GetIdentitySession()
+    {
+        return await GetSessionOfType(SessionPermission.ReadUserId);
+    }
+
+    public async Task<Session> GetRefreshSession()
+    {
+        return await GetSessionOfType(SessionPermission.Refresh);
     }
 }

@@ -7,7 +7,7 @@ namespace Effuse.Auth.Controllers;
 
 [ApiController]
 [Route("users")]
-public class UserController(IUserRepository userRepository) : ControllerBase
+public class UserController(IUserRepository userRepository, IProfileRepository profileRepository) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> PostUserAsync([FromBody] PostUserModel model)
@@ -27,6 +27,20 @@ public class UserController(IUserRepository userRepository) : ControllerBase
             Email = data.Email,
             CreatedOn = data.CreatedOn.ToString("o", CultureInfo.InvariantCulture),
             UpdatedOn = data.UpdatedOn.ToString("o", CultureInfo.InvariantCulture),
+        });
+    }
+
+    [HttpGet("{userId}/profile")]
+    public async Task<IActionResult> GetUserProfileAsync(string userId)
+    {
+        var user = await userRepository.GetUser(Guid.Parse(userId));
+        var data = await profileRepository.GetUserProfile(user);
+
+        return Ok(new
+        {
+            Username = user.Username,
+            Biography = data.Biography,
+            IconUrl = data.IconUrl,
         });
     }
 }

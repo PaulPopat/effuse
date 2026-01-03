@@ -72,6 +72,10 @@ export class User {
     return this.#model.id;
   }
 
+  get username() {
+    return this.#model.username;
+  }
+
   async authenticate(mode: "username" | "email" = "email") {
     const response = await Execute({
       url: "/sessions",
@@ -84,5 +88,12 @@ export class User {
     });
 
     return new Session(SessionModel.parse(response));
+  }
+
+  async getPublicBiography() {
+    return await Execute({
+      url: `/users/${this.userId}/profile`,
+      method: "GET",
+    });
   }
 }

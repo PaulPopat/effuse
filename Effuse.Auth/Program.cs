@@ -38,12 +38,15 @@ switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
         ));
         break;
 }
-builder.Services.AddSingleton(typeof(Env));
-builder.Services.AddSingleton(typeof(GuidService));
-builder.Services.AddSingleton(typeof(DateTimeService));
-builder.Services.AddSingleton(typeof(PasswordHasher));
-builder.Services.AddTransient(typeof(IUserRepository), typeof(UserRepository));
-builder.Services.AddTransient(typeof(ISessionRepository), typeof(SessionRepository));
+builder.Services.AddSingleton<Env>();
+builder.Services.AddSingleton<GuidService>();
+builder.Services.AddSingleton<DateTimeService>();
+builder.Services.AddSingleton<PasswordHasher>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<ISessionRepository, SessionRepository>();
+builder.Services.AddTransient<IServerClient, ServerClient>();
+builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
+builder.Services.AddTransient<IServerRepository, ServerRepository>();
 builder.Services.AddTransient(e =>
 {
     return new SmtpClient
