@@ -4,6 +4,6 @@ public class StagedUserRow
 {
     public const string Table = "users_staging";
 
-    public required string id { get; set; }
+    public required Guid id { get; set; }
     public required string email { get; set; }
 }

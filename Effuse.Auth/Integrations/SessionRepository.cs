@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Effuse.Auth.Integrations;
 
-public class SessionRepository(Env env, IUserRepository userRepository, HttpContext context)
+public class SessionRepository(Env env, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor) : ISessionRepository
 {
     private SymmetricSecurityKey SecurityKey => new(Encoding.UTF8.GetBytes(env.JwtKey));
     private SigningCredentials Credentials => new(SecurityKey, SecurityAlgorithms.HmacSha256);
@@ -18,7 +18,7 @@ public class SessionRepository(Env env, IUserRepository userRepository, HttpCont
         var claims = new[]
         {
              new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+             new Claim("UserId", user.Id.ToString()),
              new Claim("Grant", permission.ToString())
          };
 
@@ -48,21 +48,22 @@ public class SessionRepository(Env env, IUserRepository userRepository, HttpCont
         });
 
         if (!token.IsValid) throw new UnauthorisedError("ParseSession", "InvalidJWT");
-        var sub = token.Claims.Single(c => c.Key == JwtRegisteredClaimNames.Sub).Value;
+        var sub = token.Claims.Single(c => c.Key == "UserId").Value;
         var user = await userRepository.GetUser(Guid.Parse((string)sub));
         var permissionClaim = token.Claims.Single(c => c.Key == "Grant").Value;
-        var permission = (SessionPermission)int.Parse((string)permissionClaim);
+        var permission = Enum.Parse<SessionPermission>((string)permissionClaim);
         var expClaim = token.Claims.Single(c => c.Key == JwtRegisteredClaimNames.Exp).Value;
-        var exp = new DateTime(long.Parse((string)expClaim) * 1000);
+        var exp = new DateTime((long)expClaim * 1000);
         return new(user, exp, permission);
     }
 
     public async Task<Session> GetCurrentSession()
     {
-        var request = context.Request;
+        var request = httpContextAccessor.HttpContext?.Request;
+        if (request == null) throw new UnauthorisedError("GetCurrentSession", "InvalidRequest");
         var token = (request.Headers.Authorization.Single()?.Split(' ')[1])
             ?? throw new UnauthorisedError("GetCurrentSession", "InvalidToken");
-        
+
         return await ParseSession(token);
     }
 }

@@ -60,6 +60,7 @@ builder.Services.AddTransient(e =>
         UseDefaultCredentials = false,
     };
 });
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 

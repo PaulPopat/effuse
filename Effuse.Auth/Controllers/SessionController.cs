@@ -18,7 +18,7 @@ public class SessionController(IUserRepository userRepository, ISessionRepositor
         {
             AccessToken = sessionRepository.CreateSession(user, SessionPermission.Admin, 120),
             RefreshToken = sessionRepository.CreateSession(user, SessionPermission.Refresh, 60 * 48),
-            ServerTokn = sessionRepository.CreateSession(user, SessionPermission.ReadUserId, 120),
+            ServerToken = sessionRepository.CreateSession(user, SessionPermission.ReadUserId, 120),
             Expires = DateTime.UtcNow.AddMinutes(120).ToString("o", CultureInfo.InvariantCulture),
             TokenType = "Bearer",
         });

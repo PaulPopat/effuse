@@ -1,0 +1,14 @@
+{
+  "name": "@effuse/api-test",
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "@types/jsdom": "^27.0.0",
+    "typescript": "^5.9.3",
+    "jsdom": "^27.4.0",
+    "zod": "^4.3.4"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "type": "module"
+}

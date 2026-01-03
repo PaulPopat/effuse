@@ -12,6 +12,6 @@ public class UserStagingController(IUserRepository userRepository) : ControllerB
     public async Task<IActionResult> PostUserStaging([FromBody] PostUserStagingModel model)
     {
         await userRepository.StageUser(model.Email);
-        return Created();
+        return Created("/", new {});
     }
 }

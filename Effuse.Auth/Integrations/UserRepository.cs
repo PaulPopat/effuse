@@ -24,7 +24,7 @@ public class UserRepository
 
         await db.Query(StagedUserRow.Table).InsertAsync(new StagedUserRow
         {
-            id = id.ToString(),
+            id = id,
             email = email
         });
 
@@ -46,7 +46,7 @@ public class UserRepository
     {
         var stagingResult = await db.Query(StagedUserRow.Table).Select("*").Where("email", props.Email).GetAsync<StagedUserRow>();
         var staged = stagingResult.First();
-        if (staged == null || Guid.Parse(staged.id) != props.Verification)
+        if (staged == null || staged.id != props.Verification)
         {
             throw new UnauthorisedError("CreateUser", "InvalidVerification");
         }
@@ -69,7 +69,7 @@ public class UserRepository
 
         await db.Query(UserRow.Table).InsertAsync(new UserRow
         {
-            id = id.ToString(),
+            id = id,
             username = props.Username,
             email = props.Email,
             hashed_password = hashed_password,
@@ -89,7 +89,7 @@ public class UserRepository
 
     public async Task<User> GetUser(Guid userId)
     {
-        var entries = await db.Query(UserRow.Table).Select("*").Where("users.id", userId.ToString()).GetAsync<UserRow>();
+        var entries = await db.Query(UserRow.Table).Select("*").Where("users.id", userId).GetAsync<UserRow>();
         if (!entries.Any())
         {
             throw new NotFoundError("GetUser", userId.ToString());
@@ -98,7 +98,7 @@ public class UserRepository
         var row = entries.Single();
         return new
         (
-            id: Guid.Parse(row.id),
+            id: row.id,
             username: row.username,
             email: row.email,
             created_on: row.created_on,
@@ -130,7 +130,7 @@ public class UserRepository
 
         return new
         (
-            id: Guid.Parse(found.id),
+            id: found.id,
             username: found.username,
             email: found.email,
             created_on: found.created_on,
