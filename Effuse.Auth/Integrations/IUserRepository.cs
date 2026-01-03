@@ -9,5 +9,7 @@ public interface IUserRepository
 
     Task<User> CreateUser(CreateUserProps props);
 
-    Task<User> GetUser(string userId);
+    Task<User> GetUser(Guid userId);
+
+    Task<User> FindUser(string usernameOrEmail, string password);
 }

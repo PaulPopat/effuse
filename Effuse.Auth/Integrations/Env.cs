@@ -20,4 +20,6 @@ public class Env
     public string EmailFrom => GetEnvironmentVariable("SMTP_EMAIL_FROM");
     public string VerificationEmailSubject => GetAssetFile("Effuse.Auth.Assets.VerificationEmailSubject.txt");
     public string VerificationEmailBody => GetAssetFile("Effuse.Auth.Assets.VerificationEmailBody.html");
+    public string JwtKey => GetEnvironmentVariable("JWT_KEY");
+    public string JwtIssuer => GetEnvironmentVariable("JWT_ISSUER");
 }

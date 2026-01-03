@@ -43,6 +43,7 @@ builder.Services.AddSingleton(typeof(GuidService));
 builder.Services.AddSingleton(typeof(DateTimeService));
 builder.Services.AddSingleton(typeof(PasswordHasher));
 builder.Services.AddTransient(typeof(IUserRepository), typeof(UserRepository));
+builder.Services.AddTransient(typeof(ISessionRepository), typeof(SessionRepository));
 builder.Services.AddTransient(e =>
 {
     return new SmtpClient

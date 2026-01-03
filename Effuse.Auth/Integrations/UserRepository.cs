@@ -87,12 +87,12 @@ public class UserRepository
         );
     }
 
-    public async Task<User> GetUser(string userId)
+    public async Task<User> GetUser(Guid userId)
     {
-        var entries = await db.Query(UserRow.Table).Select("*").Where("users.id", userId).GetAsync<UserRow>();
+        var entries = await db.Query(UserRow.Table).Select("*").Where("users.id", userId.ToString()).GetAsync<UserRow>();
         if (!entries.Any())
         {
-            throw new NotFoundError("GetUser", userId);
+            throw new NotFoundError("GetUser", userId.ToString());
         }
 
         var row = entries.Single();
@@ -103,6 +103,38 @@ public class UserRepository
             email: row.email,
             created_on: row.created_on,
             updated_on: row.updated_on
+        );
+    }
+
+    public async Task<User> FindUser(string usernameOrEmail, string password)
+    {
+        var found =
+            (
+                await db
+                    .Query(UserRow.Table)
+                    .Select("*")
+                    .Where("users.email", usernameOrEmail)
+                    .GetAsync<UserRow>()
+            ).SingleOrDefault() ??
+            (
+                await db
+                    .Query(UserRow.Table)
+                    .Select("*")
+                    .Where("users.username", usernameOrEmail)
+                    .GetAsync<UserRow>()
+            ).SingleOrDefault();
+        if (found == null || !passwordHasher.Verify(password, found.hashed_password))
+        {
+            throw new UnauthorisedError("FindUser", "InvalidCredentials");
+        }
+
+        return new
+        (
+            id: Guid.Parse(found.id),
+            username: found.username,
+            email: found.email,
+            created_on: found.created_on,
+            updated_on: found.updated_on
         );
     }
 }
