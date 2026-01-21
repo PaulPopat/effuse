@@ -1,13 +1,17 @@
 import { Token } from "@/domain/auth";
 import { url, UrlProps } from "./url";
+import z from "zod";
 
-export type SendProps = UrlProps & {
+export type SendProps<TResult> = UrlProps & {
   method: string;
   body?: unknown;
   token?: Token;
+  expect?: z.ZodType<TResult>;
 };
 
-export async function send(props: SendProps) {
+export async function send<TResult>(
+  props: SendProps<TResult>,
+): Promise<TResult> {
   const headers = new Headers();
   if (props.token) headers.set("Authorization", props.token.toString());
   if (props.body) headers.set("Content-Type", "application/json");
@@ -30,5 +34,6 @@ export async function send(props: SendProps) {
       `Request to ${props.method}:${props.path} failed with status code ${result.status}`,
     );
 
+  if (props.expect) return props.expect.parse(await result.json());
   return await result.json();
 }

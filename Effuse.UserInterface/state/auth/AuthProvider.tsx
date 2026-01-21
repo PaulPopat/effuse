@@ -12,14 +12,13 @@ const key = "auth_info";
 
 async function refresh_session(session: Session) {
   try {
-    const result = await send({
+    const model = await send({
       base: AUTH_BASE_URL,
       path: "/session/refresh",
       method: "POST",
       token: session.RefreshToken,
+      expect: SessionModel,
     });
-
-    const model = SessionModel.parse(result);
 
     return new Session({
       access_token: model.accessToken,
@@ -95,7 +94,7 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
   const ctx = React.useMemo(
     (): AuthContext => ({
       login: async (username, password) => {
-        const result = await send({
+        const model = await send({
           base: AUTH_BASE_URL,
           path: "/sessions",
           method: "POST",
@@ -103,9 +102,9 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
             usernameOrEmail: username,
             password,
           },
+          expect: SessionModel,
         });
 
-        const model = SessionModel.parse(result);
         set_session(
           new Session({
             access_token: model.accessToken,
