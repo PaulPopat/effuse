@@ -1,17 +1,7 @@
 import React from "react";
 import { FormContext } from "./FormContext";
 import { StyleSheet, Text, View } from "react-native";
-import {
-  backdrop,
-  content,
-  gap,
-  margin,
-  padding,
-  shadowed,
-  t,
-  text,
-  v,
-} from "@/theme";
+import { content, gap, margin, shadowed, t, text, v } from "@/theme";
 import { FormValue } from "@/utils/form";
 
 export type FormControlFieldProps = {
@@ -19,6 +9,7 @@ export type FormControlFieldProps = {
   change: (value: FormValue) => void;
   children: never;
   invalid?: boolean;
+  blur?: () => void;
 };
 
 export type FormControlProps<T extends FormControlFieldProps> =
@@ -32,8 +23,13 @@ export const FormControl = <T extends FormControlFieldProps>(
 ) => {
   const ctx = React.useContext(FormContext);
   if (!ctx) throw new Error("Must be within a form provider");
+  const [should_validate, set_should_validate] = React.useState(false);
+  const show_errors = ctx.submitted || should_validate;
 
-  const invalid = ctx.submitted && !!ctx.validation(props.name);
+  const validation = ctx
+    .validation(props.name)
+    ?.filter((v) => v.path.join(".") === props.name);
+  const invalid = show_errors && !!validation?.length;
 
   return (
     <View style={[styles.container, invalid ? styles.container_error : null]}>
@@ -45,7 +41,12 @@ export const FormControl = <T extends FormControlFieldProps>(
         value={ctx.get(props.name)}
         change={(v) => ctx.set(props.name, v)}
         invalid={invalid}
+        blur={() => set_should_validate(true)}
       />
+      {show_errors &&
+        validation?.map((v) => (
+          <Text style={styles.error_text}>{v.message}</Text>
+        ))}
     </View>
   );
 };
@@ -53,18 +54,22 @@ export const FormControl = <T extends FormControlFieldProps>(
 const styles = StyleSheet.create({
   container: v(
     gap("medium"),
-    backdrop("highlight"),
     {
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
       alignItems: "flex-start",
     },
-    padding("medium"),
     margin("medium", "none"),
     shadowed(),
   ),
-  title: t(text("medium"), content("highlight")),
-  container_error: v(backdrop("error")),
-  title_error: t(content("error")),
+  title: t(text("medium"), content("light_a0")),
+  container_error: v(),
+  title_error: t(content("danger_a20")),
+  error_text: t(
+    content("danger_a20"),
+    text("small"),
+    { width: "100%" },
+    margin("small", "none"),
+  ),
 });

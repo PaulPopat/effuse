@@ -1,5 +1,6 @@
 import {
   backdrop,
+  center,
   content,
   margin,
   padding,
@@ -10,26 +11,44 @@ import {
   v,
 } from "@/theme";
 import React from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
 export type ButtonProps = React.PropsWithChildren & {
   press: () => void;
-  colour?: ThemeColour;
+  backdrop: ThemeColour;
+  content: ThemeColour;
+  small?: boolean;
+  loading?: boolean;
 };
 
 export const Button = (props: ButtonProps) => {
   return (
-    <View
-      style={v(
-        padding("large", "medium"),
-        backdrop(props.colour ?? "highlight"),
-        margin("medium", "none"),
-        shadowed(),
-      )}
+    <Pressable
+      style={[
+        styles.button,
+        backdrop(props.backdrop),
+        props.small ? styles.button_small : null,
+      ]}
+      onPress={props.press}
     >
-      <Text style={t(content(props.colour ?? "highlight"), text("medium"))}>
-        {props.children}
-      </Text>
-    </View>
+      {props.loading ? (
+        <ActivityIndicator color={ThemeColour[props.content]} />
+      ) : (
+        <Text style={[styles.button_text, content(props.content)]}>
+          {props.children}
+        </Text>
+      )}
+    </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  button: v(
+    padding("large", "medium"),
+    margin("medium", "none"),
+    shadowed(),
+    center("row"),
+  ),
+  button_small: v(padding("medium")),
+  button_text: t(text("medium")),
+});

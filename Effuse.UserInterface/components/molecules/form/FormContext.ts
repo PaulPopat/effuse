@@ -8,6 +8,7 @@ export type FormContext = {
   validation: (key: string) => Array<z.core.$ZodIssue> | null;
   submit: () => void;
   submitted: boolean;
+  loading: boolean;
 };
 
 export const FormContext = React.createContext<FormContext | undefined>(

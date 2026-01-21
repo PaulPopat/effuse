@@ -5,6 +5,7 @@ export const font_sizes = Object.freeze({
   small: 12,
   medium: 16,
   large: 22,
+  extra_large: 30,
 });
 
 export type FontSize = keyof typeof font_sizes;

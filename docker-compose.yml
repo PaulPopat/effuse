@@ -22,6 +22,8 @@ services:
       JWT_KEY: secret_jwt_key_that_is_secret_and_hidden
       JWT_ISSUER: effuse.chat
 
+      UI_ORIGIN: http://localhost:8081
+
   maildev:
     image: maildev/maildev
     restart: unless-stopped

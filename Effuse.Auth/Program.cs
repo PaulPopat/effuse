@@ -8,6 +8,21 @@ using SqlKata.Execution;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy
+    (
+        name: Cors.EffuseOrigins,
+        policy  =>
+        {
+            policy
+                .WithOrigins(Env.GetEnvironmentVariable("UI_ORIGIN"))
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    );
+});
+
 switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
 {
     case "sqlite":
@@ -69,6 +84,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseCors(Cors.EffuseOrigins);
 app.MapControllers();
 
 app.Run();

@@ -27,6 +27,8 @@ services:
       EFFUSE_URL: http://localhost:5171
       MAILDEV_URL: http://maildev:1080
 
+      UI_ORIGIN: http://localhost:8081
+
   maildev:
     image: maildev/maildev
     ports:

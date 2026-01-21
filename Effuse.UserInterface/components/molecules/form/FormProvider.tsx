@@ -6,7 +6,7 @@ import { FormValue } from "@/utils/form";
 export type FormProviderProps<T extends Record<string, FormValue>> =
   React.PropsWithChildren & {
     schema: z.ZodType<T>;
-    submit: (value: T) => void;
+    submit: (value: T) => Promise<any>;
   };
 
 export const FormProvider = <T extends Record<string, FormValue>>(
@@ -14,6 +14,7 @@ export const FormProvider = <T extends Record<string, FormValue>>(
 ) => {
   const [value, set_value] = React.useState<Record<string, FormValue>>({});
   const [submitted, set_submited] = React.useState(false);
+  const [loading, set_loading] = React.useState(false);
 
   const validation = React.useMemo(
     () => props.schema.safeParse(value),
@@ -27,14 +28,28 @@ export const FormProvider = <T extends Record<string, FormValue>>(
       validation: (key) =>
         validation.error?.issues?.filter((i) => i.path.join(".") === key) ??
         null,
-      submit: () => {
-        set_submited(true);
-        if (!validation.success) return;
-        props.submit(validation.data);
+      submit: async () => {
+        try {
+          set_loading(true);
+          set_submited(true);
+          if (!validation.success) return;
+          await props.submit(validation.data);
+        } finally {
+          set_loading(false);
+        }
       },
       submitted,
+      loading,
     }),
-    [value, set_value, validation, props.submit, submitted],
+    [
+      value,
+      set_value,
+      validation,
+      props.submit,
+      submitted,
+      loading,
+      set_loading,
+    ],
   );
 
   return (

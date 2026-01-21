@@ -2,6 +2,7 @@ using System.Globalization;
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Domain;
 using Effuse.Auth.Integrations;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Effuse.Auth.Controllers;
@@ -22,6 +23,7 @@ public class SessionController(IUserRepository userRepository, ISessionRepositor
         };
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpPost]
     public async Task<IActionResult> PostSessionAsync([FromBody] PostSessionModel model)
     {
@@ -39,6 +41,7 @@ public class SessionController(IUserRepository userRepository, ISessionRepositor
         });
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpGet("refresh")]
     public async Task<IActionResult> GetRefreshSessionAsync()
     {

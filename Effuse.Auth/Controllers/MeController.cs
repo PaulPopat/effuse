@@ -2,6 +2,7 @@ using System.Globalization;
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Effuse.Auth.Controllers;
@@ -16,7 +17,7 @@ public class MeController
     IServerClient serverClient
 ) : ControllerBase
 {
-
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpGet("profile")]
     public async Task<IActionResult> GetUserProfileAsync()
     {
@@ -31,6 +32,7 @@ public class MeController
         });
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpPut("profile/biography")]
     public async Task<IActionResult> PutUserProfileBiographyAsync([FromBody] PutBiographyModel model)
     {
@@ -46,6 +48,7 @@ public class MeController
         });
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpGet("servers")]
     public async Task<IActionResult> GetUserServersAsync()
     {
@@ -66,6 +69,7 @@ public class MeController
         );
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpPost("servers")]
     public async Task<IActionResult> PostUserServerAsync([FromBody] PostUserServerModel model)
     {

@@ -1,6 +1,7 @@
 using System.Globalization;
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Integrations;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Effuse.Auth.Controllers;
@@ -9,6 +10,7 @@ namespace Effuse.Auth.Controllers;
 [Route("users")]
 public class UserController(IUserRepository userRepository, IProfileRepository profileRepository) : ControllerBase
 {
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpPost]
     public async Task<IActionResult> PostUserAsync([FromBody] PostUserModel model)
     {
@@ -30,6 +32,7 @@ public class UserController(IUserRepository userRepository, IProfileRepository p
         });
     }
 
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpGet("{userId}/profile")]
     public async Task<IActionResult> GetUserProfileAsync(string userId)
     {

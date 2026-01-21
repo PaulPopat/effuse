@@ -5,5 +5,5 @@ export default function () {
   const auth = use_auth();
 
   if (!!auth.session) return <Redirect href="/servers" />;
-  return <Redirect href="/auth/login" />;
+  return <Redirect href="/login" />;
 }

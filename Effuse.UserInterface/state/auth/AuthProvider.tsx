@@ -6,6 +6,7 @@ import { Session } from "../../domain/auth";
 import { AUTH_BASE_URL } from "@/utils/env";
 import { send } from "@/utils/api";
 import { AuthContext } from "./AuthContext";
+import { useRouter } from "expo-router";
 
 const key = "auth_info";
 
@@ -58,6 +59,7 @@ const use_default = suspended(async () => {
 });
 
 export const AuthProvider = (props: React.PropsWithChildren) => {
+  const router = useRouter();
   const [session, set_session] = React.useState(use_default());
 
   React.useEffect(() => {
@@ -95,7 +97,7 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
       login: async (username, password) => {
         const result = await send({
           base: AUTH_BASE_URL,
-          path: "/session",
+          path: "/sessions",
           method: "POST",
           body: {
             usernameOrEmail: username,
@@ -103,7 +105,7 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
           },
         });
 
-        const model = SessionModel.parse(JSON.parse(result));
+        const model = SessionModel.parse(result);
         set_session(
           new Session({
             access_token: model.accessToken,
@@ -113,6 +115,8 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
             token_type: model.tokenType,
           }),
         );
+
+        router.push("/servers");
       },
       logout: () => {
         set_session(null);
@@ -124,6 +128,8 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
           method: "POST",
           body: { email },
         });
+
+        router.push("/login");
       },
       register: async (username, email, password, verification) => {
         await send({
@@ -132,6 +138,8 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
           method: "POST",
           body: { username, email, password, verification },
         });
+
+        router.push("/login");
       },
       session,
     }),

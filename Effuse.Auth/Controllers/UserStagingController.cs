@@ -1,5 +1,6 @@
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Integrations;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Effuse.Auth.Controllers;
@@ -8,6 +9,7 @@ namespace Effuse.Auth.Controllers;
 [Route("user-staging")]
 public class UserStagingController(IUserRepository userRepository) : ControllerBase
 {
+    [EnableCors(Cors.EffuseOrigins)]
     [HttpPost]
     public async Task<IActionResult> PostUserStaging([FromBody] PostUserStagingModel model)
     {
