@@ -10,8 +10,8 @@ export type ExecuteProps = {
 };
 
 const base_urls: Record<ExecuteArea, string> = {
-  effuse: "http://localhost:5171",
-  maildev: "http://maildev:1080",
+  effuse: process.env.EFFUSE_URL ?? "http://localhost:8080",
+  maildev: process.env.MAILDEV_URL ?? "http://localhost:1080",
 };
 
 export async function Execute(props: ExecuteProps): Promise<any> {

@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Effuse.Auth/bin/Debug/net8.0/Effuse.Auth.dll",
+            "program": "${workspaceFolder}/Effuse.Auth/bin/Debug/net10.0/Effuse.Auth.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Effuse.Auth",
             "stopAtEntry": false,

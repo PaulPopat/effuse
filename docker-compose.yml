@@ -2,12 +2,10 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ../:/app:cached
-      - vscode:/root/.vscode-server
-    command: sleep infinity
-    user: root
+      dockerfile: Dockerfile.Auth
+    restart: unless-stopped
+    ports:
+      - 8080:8080
     environment:
       SMTP_EMAIL_FROM: account@effuse.chat
       SMTP_HOST: maildev
@@ -24,11 +22,9 @@ services:
       JWT_KEY: secret_jwt_key_that_is_secret_and_hidden
       JWT_ISSUER: effuse.chat
 
-      EFFUSE_URL: http://localhost:5171
-      MAILDEV_URL: http://maildev:1080
-
   maildev:
     image: maildev/maildev
+    restart: unless-stopped
     ports:
       - 1080:1080
       - 1025:1025
@@ -38,10 +34,26 @@ services:
 
   postgres:
     image: postgres
+    restart: unless-stopped
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: effuse
+      POSTGRES_PASSWORD: test_database
+    volumes:
+      - postgres:/var/lib/postgresql
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.Migration
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_PROVIDER: postgres
+      POSTGRES_HOST: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: effuse
       POSTGRES_PASSWORD: test_database
 
 volumes:
-  vscode:
+  postgres:

@@ -1,0 +1,9 @@
+FROM node:alpine
+
+COPY ./Effuse.DatabaseMigration /app
+
+WORKDIR /app
+
+RUN npm install
+
+ENTRYPOINT [ "npm", "run", "migrate:latest" ]
