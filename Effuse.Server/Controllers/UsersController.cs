@@ -34,8 +34,7 @@ public class UsersController
   public async Task<IActionResult> PostUserAsync([FromBody] PostUserModel model)
   {
     var role = await tokenService.ValidateInviteToken(model.InviteToken);
-    var userId = await tokenService.ValidateServerToken(model.ServerToken);
-    var user = await userRepository.CreateUser(userId, role);
+    var user = await userRepository.CreateUser(Guid.Parse(model.UserId), role);
 
     return Created("/users/{userId}", UserModel(user));
   }

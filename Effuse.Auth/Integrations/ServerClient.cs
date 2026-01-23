@@ -4,8 +4,19 @@ namespace Effuse.Auth.Integrations;
 
 public class ServerClient : IServerClient
 {
-    public Task<bool> UserHasAccess(User user, string serverUrl, string inviteToken)
+    public async Task<bool> UserHasAccess(User user, string serverUrl, string inviteToken)
     {
-        return Task.FromResult(true);
+        using var client = new HttpClient()
+        {
+            BaseAddress = new Uri(serverUrl),
+        };
+
+        using var response = await client.PostAsJsonAsync("/users", new
+        {
+            InviteToken = inviteToken,
+            UserId = user.Id.ToString(),
+        });
+
+        return response.IsSuccessStatusCode;
     }
 }

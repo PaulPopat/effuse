@@ -1,5 +1,5 @@
 using Effuse.Auth.Domain;
-using Effuse.Auth.Errors;
+using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
 using Effuse.Core.Utils;
 using System.IdentityModel.Tokens.Jwt;
