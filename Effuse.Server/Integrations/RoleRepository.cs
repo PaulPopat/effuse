@@ -13,9 +13,8 @@ public class RoleRepository
   DateTimeService dateTimeService
 ) : IRoleRepository
 {
-  public async Task<Role> CreateRole(string name, List<Permission> permissions)
+  private async Task<Role> CreateFullRole(Guid id, string name, List<Permission> permissions)
   {
-    var id = guidService.NewGuid;
     var now = dateTimeService.Now;
 
     await db.Query(RoleRow.TableName).InsertAsync(new RoleRow
@@ -41,6 +40,30 @@ public class RoleRepository
       created_on: now,
       permissions: permissions
     );
+  }
+
+  public async Task<Role> EnsureAdminRole()
+  {
+    var roleId = Guid.Parse("00000000-0000-0000-0000-000000000000");
+    try
+    {
+      var found = await GetRole(roleId);
+      if (!found.HasPermission(Permission.ManageRoles))
+      {
+        await UpdateRole(found.WithPermission(Permission.ManageRoles));
+      }
+
+      return found;
+    }
+    catch
+    {
+      return await CreateFullRole(roleId, "ServerAdmin", [Permission.ManageRoles]);
+    }
+  }
+
+  public async Task<Role> CreateRole(string name, List<Permission> permissions)
+  {
+    return await CreateFullRole(guidService.NewGuid, name, permissions);
   }
 
   public async Task<Role?> FindRoleWithPermission(Permission permission)

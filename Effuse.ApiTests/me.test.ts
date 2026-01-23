@@ -1,6 +1,7 @@
 import test from "node:test";
 import { User } from "./models/User.ts";
 import assert from "node:assert";
+import { Encode } from "./utils/jwt-client.ts";
 
 test("gets and updates the profile biography", async () => {
   const user = await User.Init();
@@ -37,8 +38,17 @@ test("gets and updates servers", async () => {
 
   assert.deepEqual(await session.getServers(), []);
 
-  await session.postServer("https://www.test.com/", "Test.Com", "Test Invite");
+  await session.postServer(
+    process.env.SERVER_URL!,
+    "Test.Com",
+    await Encode({
+      sub: "00000000-0000-0000-0000-000000000000",
+      Grant: "Invite",
+      RoleId: "00000000-0000-0000-0000-000000000000",
+    }),
+  );
+
   assert.deepEqual(await session.getServers(), [
-    { serverUrl: "https://www.test.com/", serverName: "Test.Com" },
+    { serverUrl: process.env.SERVER_URL!, serverName: "Test.Com" },
   ]);
 });

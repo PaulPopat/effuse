@@ -3,14 +3,9 @@
   "tasks": [
     {
       "label": "build",
-      "command": "dotnet",
+      "command": "task",
       "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/Effuse.sln",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary;ForceNoAlign"
-      ],
+      "args": ["build"],
       "problemMatcher": "$msCompile"
     },
     {

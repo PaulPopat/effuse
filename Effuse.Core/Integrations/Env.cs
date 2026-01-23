@@ -9,9 +9,8 @@ public class Env
         return Environment.GetEnvironmentVariable(name) ?? throw new Exception($"{name} is required");
     }
 
-    public static string GetAssetFile(string name)
+    public static string GetAssetFile(string name, Assembly assembly)
     {
-        var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(name) ?? throw new Exception($"Missing asset file {name}");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();

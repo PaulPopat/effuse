@@ -7,10 +7,7 @@ public class DefaultInviter(ITokenService tokenService, IRoleRepository roleRepo
 {
   public async Task CreateStartupInvite()
   {
-    var role =
-      await roleRepository.FindRoleWithPermission(Permission.ManageRoles)
-      ?? await roleRepository.CreateRole("Admin", [Permission.ManageRoles, Permission.CreateInvite]);
-
+    var role = await roleRepository.EnsureAdminRole();
     var token = await tokenService.CreateInviteToken(role);
 
     Console.WriteLine($"To join the server as an admin, go to {envService.UserInterfaceOrigin}/servers/join and enter {envService.ServerUrl} under 'Server URL' and {token} under 'Invite Token'");

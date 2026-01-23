@@ -1,11 +1,12 @@
 using Effuse.Auth.Domain;
 using Effuse.Auth.Integrations.Tables;
 using Effuse.Core.Errors;
+using Effuse.Core.Integrations;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;
 
-public class ServerRepository(QueryFactory db) : IServerRepository
+public class ServerRepository(QueryFactory db, GuidService guidService) : IServerRepository
 {
     public async Task AddUserServer(User user, string server_url, string server_name)
     {
@@ -22,6 +23,7 @@ public class ServerRepository(QueryFactory db) : IServerRepository
 
         await db.Query(UserServerRow.Table).InsertAsync(new UserServerRow
         {
+            id = guidService.NewGuid,
             user_id = user.Id,
             server_url = server_url,
             server_name = server_name,
