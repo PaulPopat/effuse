@@ -4,5 +4,5 @@ namespace Effuse.Auth.Integrations;
 
 public interface IServerClient
 {
-    Task<bool> UserHasAccess(User user, string serverUrl);
+    Task<bool> UserHasAccess(User user, string serverUrl, string inviteToken);
 }

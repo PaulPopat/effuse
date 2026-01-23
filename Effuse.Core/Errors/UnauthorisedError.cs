@@ -1,4 +1,4 @@
-namespace Effuse.Auth.Errors;
+namespace Effuse.Core.Errors;
 
 public class UnauthorisedError(string area, string reason) : Exception, IApiError
 {

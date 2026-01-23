@@ -2,7 +2,7 @@ using System.Text.Json;
 using Effuse.Core.Errors;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace Effuse.Auth.Errors;
+namespace Effuse.Server.Errors;
 
 public class ApiErrorExceptionHandler : IExceptionHandler
 {

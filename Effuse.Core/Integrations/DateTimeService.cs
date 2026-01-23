@@ -1,4 +1,4 @@
-namespace Effuse.Auth.Integrations;
+namespace Effuse.Core.Integrations;
 
 public class DateTimeService
 {

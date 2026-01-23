@@ -37,7 +37,7 @@ test("gets and updates servers", async () => {
 
   assert.deepEqual(await session.getServers(), []);
 
-  await session.postServer("https://www.test.com/", "Test.Com");
+  await session.postServer("https://www.test.com/", "Test.Com", "Test Invite");
   assert.deepEqual(await session.getServers(), [
     { serverUrl: "https://www.test.com/", serverName: "Test.Com" },
   ]);

@@ -15,7 +15,7 @@ public class UserRepository
     GuidService guidService,
     DateTimeService dateTimeService,
     SmtpClient client,
-    Env env
+    EnvService env
 ) : IUserRepository
 {
     public async Task StageUser(string email)

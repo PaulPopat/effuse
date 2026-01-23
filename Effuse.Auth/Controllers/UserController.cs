@@ -1,6 +1,7 @@
-using System.Globalization;
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Integrations;
+using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +28,8 @@ public class UserController(IUserRepository userRepository, IProfileRepository p
             Id = data.Id.ToString(),
             Username = data.Username,
             Email = data.Email,
-            CreatedOn = data.CreatedOn.ToString("o", CultureInfo.InvariantCulture),
-            UpdatedOn = data.UpdatedOn.ToString("o", CultureInfo.InvariantCulture),
+            CreatedOn = data.CreatedOn.ToIsoString(),
+            UpdatedOn = data.UpdatedOn.ToIsoString(),
         });
     }
 

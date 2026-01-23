@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Mail;
+using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations;
+using Effuse.Core.Integrations;
 using Microsoft.Data.Sqlite;
 using Npgsql;
 using SqlKata.Compilers;
@@ -13,7 +15,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy
     (
         name: Cors.EffuseOrigins,
-        policy  =>
+        policy =>
         {
             policy
                 .WithOrigins(Env.GetEnvironmentVariable("UI_ORIGIN"))
@@ -53,10 +55,12 @@ switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
         ));
         break;
 }
-builder.Services.AddSingleton<Env>();
+builder.Services.AddSingleton<EnvService>();
 builder.Services.AddSingleton<GuidService>();
 builder.Services.AddSingleton<DateTimeService>();
 builder.Services.AddSingleton<PasswordHasher>();
+builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<IJwtConfig, EnvService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ISessionRepository, SessionRepository>();
 builder.Services.AddTransient<IServerClient, ServerClient>();
@@ -80,6 +84,7 @@ builder.Services.AddTransient(e =>
 });
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddExceptionHandler<ApiErrorExceptionHandler>();
 builder.Services.AddControllers();
 
 var app = builder.Build();

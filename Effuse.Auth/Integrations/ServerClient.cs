@@ -4,7 +4,7 @@ namespace Effuse.Auth.Integrations;
 
 public class ServerClient : IServerClient
 {
-    public Task<bool> UserHasAccess(User user, string serverUrl)
+    public Task<bool> UserHasAccess(User user, string serverUrl, string inviteToken)
     {
         return Task.FromResult(true);
     }

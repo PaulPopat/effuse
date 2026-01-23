@@ -21,4 +21,8 @@
     <EmbeddedResource Include="./Assets/VerificationEmailSubject.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Effuse.Core\Effuse.Core.csproj" />
+  </ItemGroup>
+
 </Project>

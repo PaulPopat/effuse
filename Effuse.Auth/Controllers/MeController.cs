@@ -2,6 +2,7 @@ using System.Globalization;
 using Effuse.Auth.Controllers.Models;
 using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations;
+using Effuse.Core.Integrations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,7 +75,7 @@ public class MeController
     public async Task<IActionResult> PostUserServerAsync([FromBody] PostUserServerModel model)
     {
         var session = await sessionRepository.GetCurrentSession();
-        if (!await serverClient.UserHasAccess(session.User, model.ServerUrl))
+        if (!await serverClient.UserHasAccess(session.User, model.ServerUrl, model.InviteToken))
         {
             throw new UnauthorisedError("PostUserServer", "ServerAccessDenied");
         }

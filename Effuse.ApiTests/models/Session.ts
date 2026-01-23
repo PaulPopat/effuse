@@ -24,7 +24,7 @@ export class Session {
       method: "GET",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.serverToken].join(
-          " "
+          " ",
         ),
       },
     });
@@ -38,7 +38,7 @@ export class Session {
       method: "GET",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.refreshToken].join(
-          " "
+          " ",
         ),
       },
     });
@@ -52,7 +52,7 @@ export class Session {
       method: "GET",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.accessToken].join(
-          " "
+          " ",
         ),
       },
     });
@@ -72,7 +72,7 @@ export class Session {
       method: "PUT",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.accessToken].join(
-          " "
+          " ",
         ),
       },
       body: { biography },
@@ -93,7 +93,7 @@ export class Session {
       method: "GET",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.accessToken].join(
-          " "
+          " ",
         ),
       },
     });
@@ -103,21 +103,21 @@ export class Session {
         z.object({
           serverUrl: z.string(),
           serverName: z.string(),
-        })
+        }),
       )
       .parse(response);
   }
 
-  async postServer(serverUrl: string, serverName: string) {
+  async postServer(serverUrl: string, serverName: string, inviteToken: string) {
     await Execute({
       url: "/me/servers",
       method: "POST",
       headers: {
         Authorization: [this.#model.tokenType, this.#model.accessToken].join(
-          " "
+          " ",
         ),
       },
-      body: { serverUrl, serverName },
+      body: { serverUrl, serverName, inviteToken },
     });
   }
 }

@@ -1,60 +1,32 @@
 using Effuse.Auth.Domain;
 using Effuse.Auth.Errors;
-using Microsoft.IdentityModel.Tokens;
+using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Effuse.Auth.Integrations;
 
-public class SessionRepository(Env env, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor) : ISessionRepository
+public class SessionRepository(JwtService jwtService, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor) : ISessionRepository
 {
-    private SymmetricSecurityKey SecurityKey => new(Encoding.UTF8.GetBytes(env.JwtKey));
-    private SigningCredentials Credentials => new(SecurityKey, SecurityAlgorithms.HmacSha256);
-    private static readonly JwtSecurityTokenHandler Handler = new();
-
     public string CreateSession(User user, SessionPermission permission, int duration)
     {
-        var claims = new[]
+        return jwtService.CreateToken(new Dictionary<string, string>()
         {
-             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-             new Claim("UserId", user.Id.ToString()),
-             new Claim("Grant", permission.ToString())
-         };
-
-        var token = new JwtSecurityToken
-        (
-            env.JwtIssuer,
-            env.JwtIssuer,
-            claims,
-            expires: DateTime.UtcNow.AddMinutes(duration),
-            signingCredentials: Credentials
-        );
-
-        return Handler.WriteToken(token);
+            [JwtRegisteredClaimNames.Sub] = user.Id.ToString(),
+            ["UserId"] = user.Id.ToString(),
+            ["Grant"] = permission.ToString()
+        }, duration);
     }
 
     public async Task<Session> ParseSession(string session)
     {
-        var token = await Handler.ValidateTokenAsync(session, new()
-        {
-            IssuerSigningKey = SecurityKey,
-            ValidAudience = env.JwtIssuer,
-            ValidIssuer = env.JwtIssuer,
-            ValidateLifetime = true,
-            ValidateAudience = true,
-            ValidateIssuer = true,
-            ValidateIssuerSigningKey = true,
-        });
-
-        if (!token.IsValid) throw new UnauthorisedError("ParseSession", "InvalidJWT");
-        var sub = token.Claims.Single(c => c.Key == "UserId").Value;
-        var user = await userRepository.GetUser(Guid.Parse((string)sub));
-        var permissionClaim = token.Claims.Single(c => c.Key == "Grant").Value;
-        var permission = Enum.Parse<SessionPermission>((string)permissionClaim);
-        var expClaim = token.Claims.Single(c => c.Key == JwtRegisteredClaimNames.Exp).Value;
-        var exp = new DateTime((long)expClaim * 1000);
-        return new(user, exp, permission);
+        var data = await jwtService.ParseToken(session);
+        return new
+        (
+            user: await userRepository.GetUser(Guid.Parse(data.GetKey<string>("UserId"))),
+            expires: new DateTime(data.GetKey<long>(JwtRegisteredClaimNames.Exp) * 1000),
+            permission: Enum.Parse<SessionPermission>(data.GetKey<string>("Grant"))
+        );
     }
 
     private async Task<Session> GetSessionOfType(SessionPermission sessionPermission)

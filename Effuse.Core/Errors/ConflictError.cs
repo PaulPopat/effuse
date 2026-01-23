@@ -1,4 +1,4 @@
-namespace Effuse.Auth.Errors;
+namespace Effuse.Core.Errors;
 
 public class ConflictError(string area, string on) : Exception, IApiError
 {

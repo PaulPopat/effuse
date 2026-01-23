@@ -1,4 +1,4 @@
-namespace Effuse.Auth.Errors;
+namespace Effuse.Core.Errors;
 
 public class NotFoundError(string area, string resource) : Exception, IApiError
 {
