@@ -1,4 +1,3 @@
-using System.Globalization;
 using Effuse.Core.Integrations;
 using Effuse.Server.Authorisation;
 using Effuse.Server.Controllers.Models;
@@ -11,7 +10,12 @@ namespace Effuse.Server.Controllers;
 
 [ApiController]
 [Route("invitations")]
-public class InvitationController(ITokenService tokenService, IRoleRepository roleRepository) : ControllerBase
+public class InvitationController
+(
+    ITokenService tokenService,
+    IRoleRepository roleRepository,
+    IEnvService envService
+) : ControllerBase
 {
     [EnableCors(Cors.EffuseOrigins)]
     [RequirePermission(Permission.CreateInvite)]
@@ -23,6 +27,7 @@ public class InvitationController(ITokenService tokenService, IRoleRepository ro
         return Created("/users", new
         {
             InviteToken = token,
+            ServerUrl = envService.ServerUrl,
         });
     }
 }

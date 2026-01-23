@@ -1,5 +1,8 @@
+using System.Runtime.Loader;
 using Effuse.Core.Integrations;
 using Effuse.Server.Errors;
+using Effuse.Server.Integrations;
+using Effuse.Server.Startup;
 using Microsoft.Data.Sqlite;
 using Npgsql;
 using SqlKata.Compilers;
@@ -64,5 +67,10 @@ app.UseAuthorization();
 
 app.UseCors(Cors.EffuseOrigins);
 app.MapControllers();
+
+// This is non blocking and should not be a concern
+#pragma warning disable CS4014
+app.Services.GetRequiredService<DefaultInviter>().CreateStartupInvite();
+#pragma warning restore CS4014
 
 app.Run();

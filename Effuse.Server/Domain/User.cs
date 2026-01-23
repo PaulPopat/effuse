@@ -18,4 +18,16 @@ public class User
   public DateTime CreatedOn => created_on;
 
   public Role Role => role;
+
+  public User WithRole(Role role)
+  {
+    return new
+    (
+      id: id,
+      username: username,
+      biography: biography,
+      created_on: created_on,
+      role: role
+    );
+  }
 }

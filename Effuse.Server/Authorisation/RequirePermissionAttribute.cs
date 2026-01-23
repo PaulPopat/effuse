@@ -16,12 +16,7 @@ public class RequirePermissionAttribute(Permission permission) : ActionFilterAtt
       throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
     }
 
-    var tokenService = context.HttpContext.RequestServices.GetService<ITokenService>();
-    if (tokenService == null)
-    {
-      throw new UnauthorisedError(context.HttpContext.Request.Path, "InternalServerError");
-    }
-
+    var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
     var role = await tokenService.ValidateAccessToken(token);
     if (!role.Permissions.Any(p => p == permission))
     {

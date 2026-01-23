@@ -7,7 +7,7 @@ using Effuse.Server.Integrations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Effuse.Auth.Controllers;
+namespace Effuse.Server.Controllers;
 
 [ApiController]
 [Route("sessions")]

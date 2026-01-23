@@ -29,6 +29,8 @@ services:
 
       UI_ORIGIN: http://localhost:8081
 
+      SERVER_URL: http://localhost:5153
+
   maildev:
     image: maildev/maildev
     ports:
