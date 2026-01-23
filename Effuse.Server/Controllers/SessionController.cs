@@ -11,14 +11,16 @@ namespace Effuse.Server.Controllers;
 
 [ApiController]
 [Route("sessions")]
-public class SessionController(IUserRepository userRepository, ITokenService tokenService, HttpContext context) : ControllerBase
+public class SessionController(IUserRepository userRepository, ITokenService tokenService, IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
-  private object CreateSessionResponse(Role role)
+  private HttpContext? Context => httpContextAccessor.HttpContext;
+
+  private async Task<object> CreateSessionResponse(Role role)
   {
     return new
     {
-      AccessToken = tokenService.CreateAccessToken(role),
-      RefreshToken = tokenService.CreateRefreshToken(role),
+      AccessToken = await tokenService.CreateAccessToken(role),
+      RefreshToken = await tokenService.CreateRefreshToken(role),
       Expires = DateTime.UtcNow.AddMinutes(120).ToIsoString(),
       TokenType = "Bearer",
     };
@@ -30,20 +32,20 @@ public class SessionController(IUserRepository userRepository, ITokenService tok
   {
     var userId = await tokenService.ValidateServerToken(model.ServerToken);
     var user = await userRepository.GetUser(userId);
-    return Ok(CreateSessionResponse(user.Role));
+    return Ok(await CreateSessionResponse(user.Role));
   }
 
   [EnableCors(Cors.EffuseOrigins)]
   [HttpGet("refresh")]
   public async Task<IActionResult> GetRefreshSessionAsync()
   {
-    var token = context.Request.Headers.Authorization.Single()?.Replace("Bearer ", string.Empty);
+    var token = Context?.Request.Headers.Authorization.Single()?.Replace("Bearer ", string.Empty);
     if (token == null)
     {
-      throw new UnauthorisedError(context.Request.Path, "InvalidPermission");
+      throw new UnauthorisedError("GetRefreshSession", "InvalidPermission");
     }
 
     var role = await tokenService.ValidateRefreshToken(token);
-    return Ok(CreateSessionResponse(role));
+    return Ok(await CreateSessionResponse(role));
   }
 }

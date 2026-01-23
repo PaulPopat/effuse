@@ -18,7 +18,7 @@ public class InvitationController
 ) : ControllerBase
 {
     [EnableCors(Cors.EffuseOrigins)]
-    [RequirePermission(Permission.CreateInvite)]
+    [RequirePermission(Permission.ManageRoles)]
     [HttpPost]
     public async Task<IActionResult> PostInvitationAsync([FromBody] PostInvitationModel model)
     {

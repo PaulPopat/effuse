@@ -36,6 +36,15 @@ public class RoleController(IRoleRepository roleRepository) : ControllerBase
   }
 
   [EnableCors(Cors.EffuseOrigins)]
+  [RequirePermission(Permission.ManageRoles)]
+  [HttpGet]
+  public async Task<IActionResult> GetRolesAsync()
+  {
+    var roles = roleRepository.ListRoles();
+    return Ok(await roles.Select(RoleModel).ToListAsync());
+  }
+
+  [EnableCors(Cors.EffuseOrigins)]
   [RequirePermission(Permission.ViewRoles)]
   [HttpGet("{roleId}")]
   public async Task<IActionResult> GetRoleAsync(string roleId)

@@ -5,5 +5,4 @@ public enum Permission
   ViewRoles,
   ViewUsers,
   ManageRoles,
-  CreateInvite,
 }

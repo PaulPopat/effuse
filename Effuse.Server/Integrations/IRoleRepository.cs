@@ -10,6 +10,8 @@ public interface IRoleRepository
 
   Task<Role> UpdateRole(Role role);
 
+  IAsyncEnumerable<Role> ListRoles();
+
   Task<Role> GetRole(Guid roleId);
 
   Task<Role?> FindRoleWithPermission(Permission permission);

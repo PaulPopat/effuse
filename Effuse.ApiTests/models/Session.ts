@@ -1,5 +1,9 @@
 import z from "zod";
-import { Execute } from "../utils/api-client.ts";
+import { base_urls, Execute } from "../utils/api-client.ts";
+import {
+  ServerConnection,
+  ServerConnectionTokens,
+} from "./ServerConnection.ts";
 
 export const SessionModel = z.object({
   accessToken: z.string(),
@@ -119,5 +123,27 @@ export class Session {
       },
       body: { serverUrl, serverName, inviteToken },
     });
+  }
+
+  async connectToServer(serverName: string) {
+    const servers = await this.getServers();
+    const server = servers.find((s) => s.serverName === serverName);
+    if (!server) throw new Error(`Server ${serverName} is not found`);
+
+    if (server.serverUrl !== base_urls.server)
+      throw new Error("Only the local server is supported when writing tests");
+    const tokensResponse = await Execute({
+      url: "/sessions",
+      method: "POST",
+      body: {
+        serverToken: this.#model.serverToken,
+      },
+      area: "server",
+    });
+
+    return new ServerConnection(
+      server.serverUrl,
+      ServerConnectionTokens.parse(tokensResponse),
+    );
   }
 }

@@ -79,6 +79,32 @@ public class RoleRepository
     return await GetRole(match.role);
   }
 
+  public async IAsyncEnumerable<Role> ListRoles()
+  {
+    var roleRows = await db
+      .Query(RoleRow.TableName)
+      .Select("*")
+      .GetAsync<RoleRow>();
+
+    foreach (var roleRow in roleRows)
+    {
+
+      var permissions = await db
+        .Query(RolePermissionRow.TableName)
+        .Select("*")
+        .Where($"{RolePermissionRow.TableName}.role", roleRow.id)
+        .GetAsync<RolePermissionRow>();
+
+      yield return new
+      (
+        id: roleRow.id,
+        name: roleRow.name,
+        created_on: roleRow.created_on,
+        permissions: permissions?.Select(r => Enum.Parse<Permission>(r.permission)).ToList() ?? []
+      );
+    }
+  }
+
   public async Task<Role> GetRole(Guid roleId)
   {
     var roleRow = await db
