@@ -12,12 +12,11 @@ module.exports = {
   postgres: {
     client: "pg",
     connection: {
-      host: process.env.POSTGRES_HOST,
+      host: process.env.EFFUSE_POSTGRES_HOST,
       port: "5432",
-      user: process.env.POSTGRES_USER,
-      database: process.env.POSTGRES_DB,
-      password: process.env.POSTGRES_PASSWORD,
+      user: process.env.EFFUSE_POSTGRES_USER,
+      database: process.env.EFFUSE_POSTGRES_DB,
+      password: process.env.EFFUSE_POSTGRES_PASSWORD,
     },
-    searchPath: 'effuse-server'
   },
 };

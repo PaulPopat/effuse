@@ -40,7 +40,7 @@ public class UserRepository
 
   public async Task<User> GetUser(Guid userId)
   {
-    var found = await db.Query(UserRow.TableName).Select("*").Where("id", userId).FirstAsync<UserRow>();
+    var found = await db.Query(UserRow.TableName).Select("*").Where("id", userId).FirstOrDefaultAsync<UserRow>();
     if (found == null)
     {
       throw new NotFoundError("GetUser", userId.ToString());
@@ -70,7 +70,7 @@ public class UserRepository
 
   public async Task<User> UpdateUser(User user)
   {
-    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", user.Id).FirstAsync<UserRow>();
+    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", user.Id).FirstOrDefaultAsync<UserRow>();
     if (existing == null)
     {
       throw new NotFoundError("CreateUser", user.Id.ToString());

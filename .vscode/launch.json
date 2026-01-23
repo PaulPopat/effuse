@@ -8,7 +8,6 @@
       "name": "LaunchAuth",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build",
       "program": "${workspaceFolder}/Effuse.Auth/bin/Debug/net10.0/Effuse.Auth.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Effuse.Auth",
@@ -28,7 +27,6 @@
       "name": "LaunchServer",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build",
       "program": "${workspaceFolder}/Effuse.Server/bin/Debug/net10.0/Effuse.Server.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Effuse.Server",
@@ -48,7 +46,8 @@
   "compounds": [
     {
       "name": "Launch App",
-      "configurations": ["LaunchAuth", "LaunchServer"]
+      "configurations": ["LaunchAuth", "LaunchServer"],
+      "preLaunchTask": "build"
     }
   ]
 }

@@ -15,7 +15,6 @@ public class RoleRepository
 {
   public async Task<Role> CreateRole(string name, List<Permission> permissions)
   {
-    using var scope = db.Connection.BeginTransaction();
     var id = guidService.NewGuid;
     var now = dateTimeService.Now;
 
@@ -35,8 +34,6 @@ public class RoleRepository
       });
     }
 
-    scope.Commit();
-
     return new
     (
       id: id,
@@ -52,7 +49,7 @@ public class RoleRepository
       .Query(RolePermissionRow.TableName)
       .Select("*")
       .Where($"{RolePermissionRow.TableName}.permission", permission.ToString())
-      .FirstAsync<RolePermissionRow>();
+      .FirstOrDefaultAsync<RolePermissionRow>();
 
     if (match == null) return null;
 
@@ -65,7 +62,7 @@ public class RoleRepository
       .Query(RoleRow.TableName)
       .Select("*")
       .Where($"{RoleRow.TableName}.id", roleId)
-      .FirstAsync<RoleRow>();
+      .FirstOrDefaultAsync<RoleRow>();
 
     if (roleRow == null)
     {
@@ -89,12 +86,11 @@ public class RoleRepository
 
   public async Task<Role> UpdateRole(Role role)
   {
-    using var scope = db.Connection.BeginTransaction();
     var existing = await db
       .Query(RoleRow.TableName)
       .Select("*")
       .Where($"{RoleRow.TableName}.id", role.Id)
-      .FirstAsync<RoleRow>();
+      .FirstOrDefaultAsync<RoleRow>();
 
     if (existing == null)
     {
@@ -122,7 +118,6 @@ public class RoleRepository
       });
     }
 
-    scope.Commit();
     return role;
   }
 }

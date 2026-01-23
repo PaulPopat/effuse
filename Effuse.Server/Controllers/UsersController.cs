@@ -23,7 +23,6 @@ public class UsersController
     return new
     {
       Id = user.Id,
-      Username = user.Username,
       CreatedOn = user.CreatedOn.ToIsoString(),
       Role = new { RoleId = user.Role.Id.ToString(), RoleName = user.Role.Name }
     };
@@ -44,8 +43,8 @@ public class UsersController
   [HttpGet]
   public async Task<IActionResult> GetUsersAsync()
   {
-    var users = await userRepository.ListUsers();
-    return Ok(users.Select(UserModel).ToList());
+    var users = userRepository.ListUsers();
+    return Ok(await users.Select(UserModel).ToListAsync());
   }
 
   [EnableCors(Cors.EffuseOrigins)]

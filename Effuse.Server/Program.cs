@@ -46,10 +46,10 @@ switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
             string.Format
             (
                 "Host={0};Username={1};Password={2};Database={3}",
-                Env.GetEnvironmentVariable("POSTGRES_HOST"),
-                Env.GetEnvironmentVariable("POSTGRES_USER"),
-                Env.GetEnvironmentVariable("POSTGRES_PASSWORD"),
-                Env.GetEnvironmentVariable("POSTGRES_DB")
+                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_HOST"),
+                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_USER"),
+                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_PASSWORD"),
+                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_DB")
             )
         ),
         new PostgresCompiler()
@@ -66,6 +66,7 @@ builder.Services.AddSingleton<IEnvService, EnvService>();
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<DefaultInviter>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<ApiErrorExceptionHandler>();
@@ -79,9 +80,6 @@ app.UseAuthorization();
 app.UseCors(Cors.EffuseOrigins);
 app.MapControllers();
 
-// This is non blocking and should not be a concern
-#pragma warning disable CS4014
-app.Services.GetRequiredService<DefaultInviter>().CreateStartupInvite();
-#pragma warning restore CS4014
+await app.Services.GetRequiredService<DefaultInviter>().CreateStartupInvite();
 
 app.Run();
