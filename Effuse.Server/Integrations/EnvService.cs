@@ -8,4 +8,5 @@ public class EnvService : IJwtConfig, IEnvService
     public string JwtIssuer => Env.GetEnvironmentVariable("JWT_ISSUER");
     public string UserInterfaceOrigin => Env.GetEnvironmentVariable("UI_ORIGIN");
     public string ServerUrl => Env.GetEnvironmentVariable("SERVER_URL");
+    public string EffuseUrl => Env.GetEnvironmentVariable("EFFUSE_URL");
 }

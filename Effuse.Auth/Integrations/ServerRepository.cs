@@ -1,6 +1,6 @@
 using Effuse.Auth.Domain;
-using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations.Tables;
+using Effuse.Core.Errors;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;

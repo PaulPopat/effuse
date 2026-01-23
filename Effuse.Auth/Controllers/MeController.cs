@@ -1,7 +1,6 @@
-using System.Globalization;
 using Effuse.Auth.Controllers.Models;
-using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations;
+using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

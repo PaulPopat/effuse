@@ -1,0 +1,128 @@
+using Effuse.Core.Errors;
+using Effuse.Core.Integrations;
+using Effuse.Server.Domain;
+using Effuse.Server.Integrations.Tables;
+using SqlKata.Execution;
+
+namespace Effuse.Server.Integrations;
+
+public class RoleRepository
+(
+  QueryFactory db,
+  GuidService guidService,
+  DateTimeService dateTimeService
+) : IRoleRepository
+{
+  public async Task<Role> CreateRole(string name, List<Permission> permissions)
+  {
+    using var scope = db.Connection.BeginTransaction();
+    var id = guidService.NewGuid;
+    var now = dateTimeService.Now;
+
+    await db.Query(RoleRow.TableName).InsertAsync(new RoleRow
+    {
+      id = id,
+      name = name,
+      created_on = now,
+    });
+
+    foreach (var permission in permissions)
+    {
+      await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
+      {
+        role = id,
+        permission = permission.ToString()
+      });
+    }
+
+    scope.Commit();
+
+    return new
+    (
+      id: id,
+      name: name,
+      created_on: now,
+      permissions: permissions
+    );
+  }
+
+  public async Task<Role?> FindRoleWithPermission(Permission permission)
+  {
+    var match = await db
+      .Query(RolePermissionRow.TableName)
+      .Select("*")
+      .Where($"{RolePermissionRow.TableName}.permission", permission.ToString())
+      .FirstAsync<RolePermissionRow>();
+
+    if (match == null) return null;
+
+    return await GetRole(match.role);
+  }
+
+  public async Task<Role> GetRole(Guid roleId)
+  {
+    var roleRow = await db
+      .Query(RoleRow.TableName)
+      .Select("*")
+      .Where($"{RoleRow.TableName}.id", roleId)
+      .FirstAsync<RoleRow>();
+
+    if (roleRow == null)
+    {
+      throw new NotFoundError("GetRole", roleId.ToString());
+    }
+
+    var permissions = await db
+      .Query(RolePermissionRow.TableName)
+      .Select("*")
+      .Where($"{RolePermissionRow.TableName}.role", roleId)
+      .GetAsync<RolePermissionRow>();
+
+    return new
+    (
+      id: roleRow.id,
+      name: roleRow.name,
+      created_on: roleRow.created_on,
+      permissions: permissions?.Select(r => Enum.Parse<Permission>(r.permission)).ToList() ?? []
+    );
+  }
+
+  public async Task<Role> UpdateRole(Role role)
+  {
+    using var scope = db.Connection.BeginTransaction();
+    var existing = await db
+      .Query(RoleRow.TableName)
+      .Select("*")
+      .Where($"{RoleRow.TableName}.id", role.Id)
+      .FirstAsync<RoleRow>();
+
+    if (existing == null)
+    {
+      throw new NotFoundError("GetRole", role.Id.ToString());
+    }
+
+    await db.Query(RoleRow.TableName).UpdateAsync(new RoleRow
+    {
+      id = role.Id,
+      name = role.Name,
+      created_on = existing.created_on,
+    });
+
+    await db
+      .Query(RolePermissionRow.TableName)
+      .Where($"{RolePermissionRow.TableName}.role", role.Id)
+      .DeleteAsync();
+
+    foreach (var permission in role.Permissions)
+    {
+      await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
+      {
+        role = role.Id,
+        permission = permission.ToString()
+      });
+    }
+
+    scope.Commit();
+    return role;
+  }
+}

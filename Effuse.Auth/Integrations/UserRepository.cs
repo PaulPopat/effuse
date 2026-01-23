@@ -1,9 +1,10 @@
 using System.Net.Mail;
 using System.Text;
 using Effuse.Auth.Domain;
-using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations.Props;
 using Effuse.Auth.Integrations.Tables;
+using Effuse.Core.Errors;
+using Effuse.Core.Integrations;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;

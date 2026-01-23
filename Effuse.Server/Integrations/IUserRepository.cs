@@ -4,7 +4,7 @@ namespace Effuse.Server.Integrations;
 
 public interface IUserRepository
 {
-  Task<IEnumerable<User>> ListUsers();
+  IAsyncEnumerable<User> ListUsers();
 
   Task<User> GetUser(Guid userId);
 

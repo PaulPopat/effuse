@@ -57,6 +57,17 @@ switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
     break;
 }
 
+
+builder.Services.AddSingleton<GuidService>();
+builder.Services.AddSingleton<DateTimeService>();
+builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<IJwtConfig, EnvService>();
+builder.Services.AddSingleton<IEnvService, EnvService>();
+builder.Services.AddTransient<IRoleRepository, RoleRepository>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<ApiErrorExceptionHandler>();
 builder.Services.AddControllers();
 

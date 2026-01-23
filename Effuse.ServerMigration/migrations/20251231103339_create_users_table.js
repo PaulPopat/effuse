@@ -11,8 +11,6 @@ exports.up = function (knex) {
     })
     .createTable("users", (t) => {
       t.uuid("id").primary();
-      t.string("username").notNullable();
-      t.string("biography");
       t.datetime("created_on").notNullable();
       t.uuid("role").references("id").inTable("roles").notNullable();
     })
