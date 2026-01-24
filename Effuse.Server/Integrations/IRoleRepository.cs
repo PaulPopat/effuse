@@ -13,6 +13,4 @@ public interface IRoleRepository
   IAsyncEnumerable<Role> ListRoles();
 
   Task<Role> GetRole(Guid roleId);
-
-  Task<Role?> FindRoleWithPermission(Permission permission);
 }

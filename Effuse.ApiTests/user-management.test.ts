@@ -10,16 +10,13 @@ test("lists the roles", async () => {
   expect(await session.getServers()).toEqual([]);
   const connection = await session.setupBasicAdmin();
   const roles = await connection.listRoles();
-  const role = roles.find(
-    (r: any) => r.id === "00000000-0000-0000-0000-000000000000",
-  );
 
   expect(roles).toEqual(
     expect.arrayContaining([
       {
         id: "00000000-0000-0000-0000-000000000000",
         name: "ServerAdmin",
-        permissions: [{ area: "ManageRoles", modification: "*" }],
+        permissions: [{ action: "*", resource: "*" }],
       },
     ]),
   );
@@ -55,12 +52,12 @@ test("creates a role and lists users", async () => {
 
   const roleName = crypto.randomUUID();
   const role = await connection.createRole(roleName, [
-    { area: "ViewUsers", modification: "*" },
+    { action: "users:list", resource: "*" },
   ]);
   expect(role).toEqual({
     id: expect.any(String),
     name: roleName,
-    permissions: [{ area: "ViewUsers", modification: "*" }],
+    permissions: [{ action: "users:list", resource: "*" }],
   });
 
   const invite = await connection.createInvite(role.id);

@@ -17,7 +17,8 @@ exports.up = function (knex) {
     .createTable("role_permissions", (t) => {
       t.increments("id");
       t.uuid("role").references("id").inTable("roles").notNullable();
-      t.string("permission").notNullable();
+      t.string("action").notNullable();
+      t.string("resource").notNullable();
     });
 };
 
@@ -26,5 +27,8 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTable("roles").dropTable("users").dropTable("role_permissions");
+  return knex.schema
+    .dropTable("role_permissions")
+    .dropTable("users")
+    .dropTable("roles");
 };

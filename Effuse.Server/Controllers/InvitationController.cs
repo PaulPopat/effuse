@@ -1,7 +1,5 @@
 using Effuse.Core.Integrations;
 using Effuse.Server.Authorisation;
-using Effuse.Server.Controllers.Models;
-using Effuse.Server.Domain;
 using Effuse.Server.Integrations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +16,11 @@ public class InvitationController
 ) : ControllerBase
 {
     [EnableCors(Cors.EffuseOrigins)]
-    [RequirePermission(PermissionArea.ManageRoles)]
-    [HttpPost]
-    public async Task<IActionResult> PostInvitationAsync([FromBody] PostInvitationModel model)
+    [RequirePermission("invitations:create", "/{roleId}")]
+    [HttpGet("{roleId}")]
+    public async Task<IActionResult> GetInvitationAsync(string roleId)
     {
-        var role = await roleRepository.GetRole(Guid.Parse(model.RoleId));
+        var role = await roleRepository.GetRole(Guid.Parse(roleId));
         var token = await tokenService.CreateInviteToken(role);
         return Created("/users", new
         {

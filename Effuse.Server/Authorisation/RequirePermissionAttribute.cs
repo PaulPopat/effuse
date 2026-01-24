@@ -1,12 +1,9 @@
-using System.Runtime.InteropServices;
-using Effuse.Server.Domain;
-
 namespace Effuse.Server.Authorisation;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-public class RequirePermissionAttribute(PermissionArea area, [Optional] string? modificationFrom) : Attribute
+public class RequirePermissionAttribute(string action, string resource) : Attribute
 {
-  public PermissionArea Area => area;
+  public string Action => action;
 
-  public string? ModificationFrom => modificationFrom;
+  public string Resource => resource;
 }

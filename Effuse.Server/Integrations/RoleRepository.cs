@@ -29,8 +29,8 @@ public class RoleRepository
       await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
       {
         role = id,
-        permission = permission.Area.ToString(),
-        modification = permission.Modification,
+        action = permission.Action,
+        resource = permission.Resource,
       });
     }
 
@@ -49,16 +49,16 @@ public class RoleRepository
     try
     {
       var found = await GetRole(roleId);
-      if (!found.HasPermission(new(PermissionArea.ManageRoles, "*")))
+      if (!found.Permissions.Any(p => p.Action == "*" && p.Resource == "*"))
       {
-        await UpdateRole(found.WithPermission(new(PermissionArea.ManageRoles, "*")));
+        await UpdateRole(found.WithPermission(new("*", "*")));
       }
 
       return found;
     }
     catch
     {
-      return await CreateFullRole(roleId, "ServerAdmin", [new(PermissionArea.ManageRoles, "*")]);
+      return await CreateFullRole(roleId, "ServerAdmin", [new("*", "*")]);
     }
   }
 
@@ -102,7 +102,7 @@ public class RoleRepository
         name: roleRow.name,
         created_on: roleRow.created_on,
         permissions: permissions?
-          .Select(r => new Permission(Enum.Parse<PermissionArea>(r.permission), r.modification ?? "*"))
+          .Select(r => new Permission(r.action, r.resource))
           .ToList() ?? []
       );
     }
@@ -133,7 +133,7 @@ public class RoleRepository
       name: roleRow.name,
       created_on: roleRow.created_on,
       permissions: permissions?
-        .Select(r => new Permission(Enum.Parse<PermissionArea>(r.permission), r.modification))
+        .Select(r => new Permission(r.action, r.resource))
         .ToList() ?? []
     );
   }
@@ -168,8 +168,8 @@ public class RoleRepository
       await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
       {
         role = role.Id,
-        permission = permission.Area.ToString(),
-        modification = permission.Modification,
+        action = permission.Action,
+        resource = permission.Resource,
       });
     }
 

@@ -47,14 +47,14 @@ export class ServerConnection {
 
   async createRole(
     name: string,
-    permissions: Array<{ area: string; modification: string }>,
+    permissions: Array<{ action: string; resource: string }>,
   ) {
     return z
       .object({
         id: z.string(),
         name: z.string(),
         permissions: z.array(
-          z.object({ area: z.string(), modification: z.string() }),
+          z.object({ action: z.string(), resource: z.string() }),
         ),
       })
       .parse(
@@ -81,15 +81,14 @@ export class ServerConnection {
       })
       .parse(
         await Execute({
-          url: "/invitations",
-          method: "POST",
+          url: `/invitations/${roleId}`,
+          method: "GET",
           headers: {
             Authorization: [
               this.#tokens.tokenType,
               this.#tokens.accessToken,
             ].join(" "),
           },
-          body: { roleId },
           area: "server",
         }),
       );

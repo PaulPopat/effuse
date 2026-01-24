@@ -1,3 +1,5 @@
+using Effuse.Server.Authorisation;
+
 namespace Effuse.Server.Domain;
 
 public class Role

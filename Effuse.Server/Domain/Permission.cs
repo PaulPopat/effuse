@@ -1,13 +1,29 @@
+using Effuse.Server.Authorisation;
+
 namespace Effuse.Server.Domain;
 
-public class Permission(PermissionArea area, string modification)
+public class Permission(string action, string resource)
 {
-  public PermissionArea Area => area;
+  public string Action => action;
 
-  public string Modification => modification;
+  public string Resource => resource;
 
   public bool Allows(PermissionRequest request)
   {
-    return request.Area == area && (request.Modification == modification || modification == "*");
+    var requestedResource = request.Resource.Split('/');
+    foreach (var (req, res) in requestedResource.Zip(resource.Split('/')))
+    {
+      if (res == "*") break;
+      if (req != res) return false;
+    }
+
+    if (action == "*") return true;
+
+    var actionParts = request.Action.Split(':');
+
+    if (action.Split(':')[0] != actionParts[0]) return false;
+    if (action.Split(':')[1] != "*" && actionParts[1] != action.Split(':')[1]) return false;
+
+    return true;
   }
 }

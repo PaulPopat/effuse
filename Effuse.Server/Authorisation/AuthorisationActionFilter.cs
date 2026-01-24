@@ -1,7 +1,5 @@
 using System.Reflection;
 using Effuse.Core.Errors;
-using Effuse.Core.Utils;
-using Effuse.Server.Domain;
 using Effuse.Server.Integrations;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -36,16 +34,23 @@ public class AuthorisationActionFilter(ITokenService tokenService) : IAsyncActio
       throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
     }
 
-
-    var area = attribute.Area;
-    var modification = attribute.ModificationFrom != null ? context.ActionArguments.GetKey<string>(attribute.ModificationFrom) : "*";
-    var request = new PermissionRequest(area, modification);
-    var user = await tokenService.ValidateAccessToken(token);
-    if (!user.Role.Permissions.Any(p => p.Allows(request)))
+    try
     {
+      var action = attribute.Action;
+      var resource = new Resource(attribute.Resource, context.ActionArguments);
+      var request = new PermissionRequest(action, resource.Rendered);
+      var user = await tokenService.ValidateAccessToken(token);
+      if (!user.Role.Permissions.Any(p => p.Allows(request)))
+      {
+        throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
+      }
+
+      await next();
+    }
+    catch (Exception err)
+    {
+      Console.WriteLine(err);
       throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
     }
-
-    await next();
   }
 }
