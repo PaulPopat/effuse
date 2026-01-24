@@ -45,12 +45,17 @@ export class ServerConnection {
     });
   }
 
-  async createRole(name: string, permissions: Array<string>) {
+  async createRole(
+    name: string,
+    permissions: Array<{ area: string; modification: string }>,
+  ) {
     return z
       .object({
         id: z.string(),
         name: z.string(),
-        permissions: z.array(z.string()),
+        permissions: z.array(
+          z.object({ area: z.string(), modification: z.string() }),
+        ),
       })
       .parse(
         await Execute({

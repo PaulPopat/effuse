@@ -18,25 +18,25 @@ public class RoleController(IRoleRepository roleRepository) : ControllerBase
     {
       Id = role.Id.ToString(),
       Name = role.Name,
-      Permissions = role.Permissions.Select(p => p.ToString()).ToList(),
+      Permissions = role.Permissions.Select(p => new { Area = p.Area.ToString(), Modification = p.Modification }).ToList(),
     };
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ManageRoles)]
+  [RequirePermission(PermissionArea.ManageRoles)]
   [HttpPost]
   public async Task<IActionResult> PostRoleAsync([FromBody] PostRoleModel model)
   {
     var role = await roleRepository.CreateRole
     (
       model.Name,
-      model.Permissions.Select(Enum.Parse<Permission>).ToList()
+      model.Permissions.Select(p => new Permission(Enum.Parse<PermissionArea>(p.Area), p.Modification)).ToList()
     );
     return Created("/roles/{roleId}", RoleModel(role));
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ManageRoles)]
+  [RequirePermission(PermissionArea.ManageRoles)]
   [HttpGet]
   public async Task<IActionResult> GetRolesAsync()
   {
@@ -45,7 +45,7 @@ public class RoleController(IRoleRepository roleRepository) : ControllerBase
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ViewRoles)]
+  [RequirePermission(PermissionArea.ViewRoles, "roleId")]
   [HttpGet("{roleId}")]
   public async Task<IActionResult> GetRoleAsync(string roleId)
   {
@@ -55,7 +55,7 @@ public class RoleController(IRoleRepository roleRepository) : ControllerBase
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ManageRoles)]
+  [RequirePermission(PermissionArea.ManageRoles, "roleId")]
   [HttpPut("{roleId}")]
   public async Task<IActionResult> PutRoleAsync(string roleId, [FromBody] PostRoleModel model)
   {
@@ -65,7 +65,7 @@ public class RoleController(IRoleRepository roleRepository) : ControllerBase
       id: role.Id,
       name: model.Name,
       created_on: role.CreatedOn,
-      permissions: model.Permissions.Select(Enum.Parse<Permission>).ToList()
+      permissions: model.Permissions.Select(p => new Permission(Enum.Parse<PermissionArea>(p.Area), p.Modification)).ToList()
     );
 
     await roleRepository.UpdateRole(result);

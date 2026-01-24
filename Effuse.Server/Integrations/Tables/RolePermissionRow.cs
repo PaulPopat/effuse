@@ -6,4 +6,5 @@ public class RolePermissionRow
 
   public required Guid role { get; set; }
   public required string permission { get; set; }
+  public required string modification { get; set; }
 }

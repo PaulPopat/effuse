@@ -16,9 +16,9 @@ public class Role
 
   public List<Permission> Permissions => permissions;
 
-  public bool HasPermission(Permission permission)
+  public bool HasPermission(PermissionRequest request)
   {
-    return permissions.Any(p => p == permission);
+    return permissions.Any(p => p.Allows(request));
   }
 
   public Role WithPermission(Permission permission)

@@ -29,7 +29,8 @@ public class RoleRepository
       await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
       {
         role = id,
-        permission = permission.ToString()
+        permission = permission.Area.ToString(),
+        modification = permission.Modification,
       });
     }
 
@@ -48,16 +49,16 @@ public class RoleRepository
     try
     {
       var found = await GetRole(roleId);
-      if (!found.HasPermission(Permission.ManageRoles))
+      if (!found.HasPermission(new(PermissionArea.ManageRoles, "*")))
       {
-        await UpdateRole(found.WithPermission(Permission.ManageRoles));
+        await UpdateRole(found.WithPermission(new(PermissionArea.ManageRoles, "*")));
       }
 
       return found;
     }
     catch
     {
-      return await CreateFullRole(roleId, "ServerAdmin", [Permission.ManageRoles]);
+      return await CreateFullRole(roleId, "ServerAdmin", [new(PermissionArea.ManageRoles, "*")]);
     }
   }
 
@@ -100,7 +101,9 @@ public class RoleRepository
         id: roleRow.id,
         name: roleRow.name,
         created_on: roleRow.created_on,
-        permissions: permissions?.Select(r => Enum.Parse<Permission>(r.permission)).ToList() ?? []
+        permissions: permissions?
+          .Select(r => new Permission(Enum.Parse<PermissionArea>(r.permission), r.modification ?? "*"))
+          .ToList() ?? []
       );
     }
   }
@@ -129,7 +132,9 @@ public class RoleRepository
       id: roleRow.id,
       name: roleRow.name,
       created_on: roleRow.created_on,
-      permissions: permissions?.Select(r => Enum.Parse<Permission>(r.permission)).ToList() ?? []
+      permissions: permissions?
+        .Select(r => new Permission(Enum.Parse<PermissionArea>(r.permission), r.modification))
+        .ToList() ?? []
     );
   }
 
@@ -163,7 +168,8 @@ public class RoleRepository
       await db.Query(RolePermissionRow.TableName).InsertAsync(new RolePermissionRow
       {
         role = role.Id,
-        permission = permission.ToString()
+        permission = permission.Area.ToString(),
+        modification = permission.Modification,
       });
     }
 

@@ -19,7 +19,7 @@ test("lists the roles", async () => {
       {
         id: "00000000-0000-0000-0000-000000000000",
         name: "ServerAdmin",
-        permissions: ["ManageRoles"],
+        permissions: [{ area: "ManageRoles", modification: "*" }],
       },
     ]),
   );
@@ -54,11 +54,13 @@ test("creates a role and lists users", async () => {
   const connection = await session.setupBasicAdmin();
 
   const roleName = crypto.randomUUID();
-  const role = await connection.createRole(roleName, ["ViewUsers"]);
+  const role = await connection.createRole(roleName, [
+    { area: "ViewUsers", modification: "*" },
+  ]);
   expect(role).toEqual({
     id: expect.any(String),
     name: roleName,
-    permissions: ["ViewUsers"],
+    permissions: [{ area: "ViewUsers", modification: "*" }],
   });
 
   const invite = await connection.createInvite(role.id);

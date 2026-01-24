@@ -1,8 +1,13 @@
 namespace Effuse.Server.Domain;
 
-public enum Permission
+public class Permission(PermissionArea area, string modification)
 {
-  ViewRoles,
-  ViewUsers,
-  ManageRoles,
+  public PermissionArea Area => area;
+
+  public string Modification => modification;
+
+  public bool Allows(PermissionRequest request)
+  {
+    return request.Area == area && (request.Modification == modification || modification == "*");
+  }
 }

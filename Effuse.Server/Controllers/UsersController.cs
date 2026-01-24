@@ -40,7 +40,7 @@ public class UsersController
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ViewUsers)]
+  [RequirePermission(PermissionArea.ViewUsers)]
   [HttpGet]
   public async Task<IActionResult> GetUsersAsync()
   {
@@ -49,7 +49,7 @@ public class UsersController
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ViewUsers)]
+  [RequirePermission(PermissionArea.ViewUsers, "userId")]
   [HttpGet("{userId}")]
   public async Task<IActionResult> GetUserAsync(string userId)
   {
@@ -58,7 +58,7 @@ public class UsersController
   }
 
   [EnableCors(Cors.EffuseOrigins)]
-  [RequirePermission(Permission.ManageRoles)]
+  [RequirePermission(PermissionArea.ManageRoles, "userId")]
   [HttpPut("{userId}/role")]
   public async Task<IActionResult> PutUserRoleAsync(string userId, [FromBody] PutUserRoleModel model)
   {
