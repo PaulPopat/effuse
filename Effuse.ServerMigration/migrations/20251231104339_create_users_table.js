@@ -26,5 +26,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTable("users").dropTable("staged_users");
+  return knex.schema.dropTable("roles").dropTable("users").dropTable("role_permissions");
 };

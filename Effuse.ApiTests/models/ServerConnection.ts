@@ -32,6 +32,42 @@ export class ServerConnection {
     });
   }
 
+  async listUsers() {
+    return await Execute({
+      url: "/users",
+      method: "GET",
+      headers: {
+        Authorization: [this.#tokens.tokenType, this.#tokens.accessToken].join(
+          " ",
+        ),
+      },
+      area: "server",
+    });
+  }
+
+  async createRole(name: string, permissions: Array<string>) {
+    return z
+      .object({
+        id: z.string(),
+        name: z.string(),
+        permissions: z.array(z.string()),
+      })
+      .parse(
+        await Execute({
+          url: "/roles",
+          method: "POST",
+          headers: {
+            Authorization: [
+              this.#tokens.tokenType,
+              this.#tokens.accessToken,
+            ].join(" "),
+          },
+          body: { name, permissions },
+          area: "server",
+        }),
+      );
+  }
+
   async createInvite(roleId: string) {
     return z
       .object({

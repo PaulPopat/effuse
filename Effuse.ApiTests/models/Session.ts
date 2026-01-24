@@ -4,6 +4,7 @@ import {
   ServerConnection,
   ServerConnectionTokens,
 } from "./ServerConnection.ts";
+import { Encode } from "../utils/jwt-client.ts";
 
 export const SessionModel = z.object({
   accessToken: z.string(),
@@ -145,5 +146,19 @@ export class Session {
       server.serverUrl,
       ServerConnectionTokens.parse(tokensResponse),
     );
+  }
+
+  async setupBasicAdmin() {
+    await this.postServer(
+      process.env.SERVER_URL!,
+      "Test.Com",
+      await Encode({
+        sub: "00000000-0000-0000-0000-000000000000",
+        Grant: "Invite",
+        RoleId: "00000000-0000-0000-0000-000000000000",
+      }),
+    );
+
+    return await this.connectToServer("Test.Com");
   }
 }
