@@ -6,15 +6,15 @@ public interface ITokenService
 {
   Task<string> CreateInviteToken(Role role);
 
-  Task<string> CreateAccessToken(Role role);
+  Task<string> CreateAccessToken(User user);
 
-  Task<string> CreateRefreshToken(Role role);
+  Task<string> CreateRefreshToken(User user);
 
   Task<Role> ValidateInviteToken(string token);
 
-  Task<Role> ValidateRefreshToken(string token);
+  Task<User> ValidateRefreshToken(string token);
 
-  Task<Role> ValidateAccessToken(string token);
+  Task<User> ValidateAccessToken(string token);
 
   Task<Guid> ValidateServerToken(string token);
 }

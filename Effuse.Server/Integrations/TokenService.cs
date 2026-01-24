@@ -7,18 +7,54 @@ using Effuse.Server.Integrations.Models;
 
 namespace Effuse.Server.Integrations;
 
-public class TokenService(JwtService jwtService, IRoleRepository roleRepository, IEnvService envService) : ITokenService
+public class TokenService
+(
+  JwtService jwtService,
+  IRoleRepository roleRepository,
+  IUserRepository userRepository,
+  IEnvService envService
+) : ITokenService
 {
-  private async Task<Role> ValidateAs(string token, string expect)
+  private const string AccessGrant = "Access";
+  private const string InviteGrant = "Invite";
+  private const string RefreshGrant = "Refresh";
+
+  public async Task<string> CreateAccessToken(User user)
+  {
+    return jwtService.CreateToken(new Dictionary<string, string>()
+    {
+      ["Grant"] = AccessGrant,
+      ["UserId"] = user.Id.ToString(),
+    }, 15);
+  }
+
+  public async Task<string> CreateInviteToken(Role role)
+  {
+    return jwtService.CreateToken(new Dictionary<string, string>()
+    {
+      ["Grant"] = InviteGrant,
+      ["RoleId"] = role.Id.ToString(),
+    }, 15);
+  }
+
+  public async Task<string> CreateRefreshToken(User user)
+  {
+    return jwtService.CreateToken(new Dictionary<string, string>()
+    {
+      ["Grant"] = RefreshGrant,
+      ["UserId"] = user.Id.ToString(),
+    }, 7 * 24);
+  }
+
+  public async Task<User> ValidateAccessToken(string token)
   {
     try
     {
       var data = await jwtService.ParseToken(token);
-      if (data.GetKey<string>("Grant") != expect) throw new Exception("Invalid Access Type");
+      if (data.GetKey<string>("Grant") != AccessGrant) throw new Exception("Invalid Grant Type");
 
-      var roleId = data.GetKey<string>("RoleId");
-      var role = await roleRepository.GetRole(Guid.Parse(roleId));
-      return role;
+      var userId = data.GetKey<string>("UserId");
+      return await userRepository.GetUser(Guid.Parse(userId));
     }
     catch (Exception error)
     {
@@ -27,46 +63,38 @@ public class TokenService(JwtService jwtService, IRoleRepository roleRepository,
     }
   }
 
-
-  public async Task<string> CreateAccessToken(Role role)
+  public async Task<Role> ValidateInviteToken(string token)
   {
-    return jwtService.CreateToken(new Dictionary<string, string>()
+    try
     {
-      ["Grant"] = "Access",
-      ["RoleId"] = role.Id.ToString(),
-    }, 15);
-  }
+      var data = await jwtService.ParseToken(token);
+      if (data.GetKey<string>("Grant") != InviteGrant) throw new Exception("Invalid Grant Type");
 
-  public async Task<string> CreateInviteToken(Role role)
-  {
-    return jwtService.CreateToken(new Dictionary<string, string>()
+      var roleId = data.GetKey<string>("RoleId");
+      return await roleRepository.GetRole(Guid.Parse(roleId));
+    }
+    catch (Exception error)
     {
-      ["Grant"] = "Invite",
-      ["RoleId"] = role.Id.ToString(),
-    }, 15);
+      Console.Write(error);
+      throw new UnauthorisedError("ValidateToken", "InvalidToken");
+    }
   }
 
-  public async Task<string> CreateRefreshToken(Role role)
+  public async Task<User> ValidateRefreshToken(string token)
   {
-    return jwtService.CreateToken(new Dictionary<string, string>()
+    try
     {
-      ["Grant"] = "Refresh",
-      ["RoleId"] = role.Id.ToString(),
-    }, 7 * 24);
-  }
+      var data = await jwtService.ParseToken(token);
+      if (data.GetKey<string>("Grant") != RefreshGrant) throw new Exception("Invalid Grant Type");
 
-  public Task<Role> ValidateAccessToken(string token)
-  {
-    return ValidateAs(token, "Access");
-  }
-  public Task<Role> ValidateInviteToken(string token)
-  {
-    return ValidateAs(token, "Invite");
-  }
-
-  public Task<Role> ValidateRefreshToken(string token)
-  {
-    return ValidateAs(token, "Refresh");
+      var userId = data.GetKey<string>("UserId");
+      return await userRepository.GetUser(Guid.Parse(userId));
+    }
+    catch (Exception error)
+    {
+      Console.Write(error);
+      throw new UnauthorisedError("ValidateToken", "InvalidToken");
+    }
   }
 
   public async Task<Guid> ValidateServerToken(string token)

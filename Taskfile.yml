@@ -29,10 +29,21 @@ tasks:
     env:
       ASPNETCORE_ENVIRONMENT: Development
 
-  run:
+  run:all:
+    internal: true
     deps:
       - run:auth
       - run:server
+
+  run:
+    cmds:
+      - task: build
+      - task: run:all
+
+  dev:
+    cmds:
+      - task: migrate
+      - task: run
 
   test:
     dir: "{{.TASKFILE_DIR}}/Effuse.ApiTests"

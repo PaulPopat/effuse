@@ -1,6 +1,7 @@
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
 using Effuse.Core.Utils;
+using Effuse.Server.Authorisation;
 using Effuse.Server.Controllers.Models;
 using Effuse.Server.Domain;
 using Effuse.Server.Integrations;
@@ -15,27 +16,29 @@ public class SessionController(IUserRepository userRepository, ITokenService tok
 {
   private HttpContext? Context => httpContextAccessor.HttpContext;
 
-  private async Task<object> CreateSessionResponse(Role role)
+  private async Task<object> CreateSessionResponse(User user)
   {
     return new
     {
-      AccessToken = await tokenService.CreateAccessToken(role),
-      RefreshToken = await tokenService.CreateRefreshToken(role),
+      AccessToken = await tokenService.CreateAccessToken(user),
+      RefreshToken = await tokenService.CreateRefreshToken(user),
       Expires = DateTime.UtcNow.AddMinutes(120).ToIsoString(),
       TokenType = "Bearer",
     };
   }
 
   [EnableCors(Cors.EffuseOrigins)]
+  [IsPublic]
   [HttpPost]
   public async Task<IActionResult> PostSessionAsync([FromBody] PostSessionModel model)
   {
     var userId = await tokenService.ValidateServerToken(model.ServerToken);
     var user = await userRepository.GetUser(userId);
-    return Ok(await CreateSessionResponse(user.Role));
+    return Ok(await CreateSessionResponse(user));
   }
 
   [EnableCors(Cors.EffuseOrigins)]
+  [IsPublic]
   [HttpGet("refresh")]
   public async Task<IActionResult> GetRefreshSessionAsync()
   {
@@ -45,7 +48,7 @@ public class SessionController(IUserRepository userRepository, ITokenService tok
       throw new UnauthorisedError("GetRefreshSession", "InvalidPermission");
     }
 
-    var role = await tokenService.ValidateRefreshToken(token);
-    return Ok(await CreateSessionResponse(role));
+    var user = await tokenService.ValidateRefreshToken(token);
+    return Ok(await CreateSessionResponse(user));
   }
 }

@@ -1,5 +1,6 @@
 using System.Runtime.Loader;
 using Effuse.Core.Integrations;
+using Effuse.Server.Authorisation;
 using Effuse.Server.Errors;
 using Effuse.Server.Integrations;
 using Effuse.Server.Startup;
@@ -70,7 +71,7 @@ builder.Services.AddTransient<DefaultInviter>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<ApiErrorExceptionHandler>();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<AuthorisationActionFilter>());
 
 var app = builder.Build();
 

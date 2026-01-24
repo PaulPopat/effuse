@@ -29,6 +29,7 @@ public class UsersController
   }
 
   [EnableCors(Cors.EffuseOrigins)]
+  [IsPublic]
   [HttpPost]
   public async Task<IActionResult> PostUserAsync([FromBody] PostUserModel model)
   {
