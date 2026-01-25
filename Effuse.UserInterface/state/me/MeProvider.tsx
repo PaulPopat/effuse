@@ -82,13 +82,17 @@ export const MeProvider = (props: React.PropsWithChildren) => {
           }),
         );
       },
-      add_server: async (server_url, server_name) => {
+      add_server: async (server_url, server_name, invite_token) => {
         await send({
           path: "/me/servers",
           base: AUTH_BASE_URL,
           method: "POST",
           token: session.AccessToken,
-          body: { serverUrl: server_url, serverName: server_name },
+          body: {
+            serverUrl: server_url,
+            serverName: server_name,
+            inviteToken: invite_token,
+          },
         });
 
         set_servers([...servers, new ServerEntry({ server_url, server_name })]);

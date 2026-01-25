@@ -3,4 +3,7 @@
 **/node_modules
 **/.DS_Store
 .task/**
-database.sqlite
+
+docker-compose.yml
+Dockerfile
+Taskfile.yml

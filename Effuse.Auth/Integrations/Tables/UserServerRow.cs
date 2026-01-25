@@ -1,5 +1,3 @@
-using System.Reflection.Metadata;
-
 namespace Effuse.Auth.Integrations.Tables;
 
 public class UserServerRow

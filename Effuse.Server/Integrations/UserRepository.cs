@@ -1,5 +1,6 @@
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using Effuse.Server.Domain;
 using Effuse.Server.Integrations.Tables;
 using SqlKata.Execution;
@@ -15,7 +16,7 @@ public class UserRepository
 {
   public async Task<User> CreateUser(Guid userId, Role role)
   {
-    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", userId).GetAsync<UserRow>();
+    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", userId).SafeGet<UserRow>();
     if (existing.Any())
     {
       throw new ConflictError("CreateUser", "Id");
@@ -39,7 +40,7 @@ public class UserRepository
 
   public async Task<User> GetUser(Guid userId)
   {
-    var found = await db.Query(UserRow.TableName).Select("*").Where("id", userId).FirstOrDefaultAsync<UserRow>();
+    var found = await db.Query(UserRow.TableName).Select("*").Where("id", userId).SafeFirstOrDefault<UserRow>();
     if (found == null)
     {
       throw new NotFoundError("GetUser", userId.ToString());
@@ -55,7 +56,7 @@ public class UserRepository
 
   public async IAsyncEnumerable<User> ListUsers()
   {
-    var entries = await db.Query(UserRow.TableName).Select("*").GetAsync<UserRow>();
+    var entries = await db.Query(UserRow.TableName).Select("*").SafeGet<UserRow>();
     foreach (var found in entries)
     {
       yield return new
@@ -69,7 +70,7 @@ public class UserRepository
 
   public async Task<User> UpdateUser(User user)
   {
-    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", user.Id).FirstOrDefaultAsync<UserRow>();
+    var existing = await db.Query(UserRow.TableName).Select("*").Where("id", user.Id).SafeFirstOrDefault<UserRow>();
     if (existing == null)
     {
       throw new NotFoundError("CreateUser", user.Id.ToString());

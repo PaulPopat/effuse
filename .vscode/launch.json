@@ -10,12 +10,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/Effuse.Auth/bin/Debug/net10.0/Effuse.Auth.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/Effuse.Auth",
+      "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
+      "envFile": "${workspaceFolder}/.env",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -29,14 +30,17 @@
       "request": "launch",
       "program": "${workspaceFolder}/Effuse.Server/bin/Debug/net10.0/Effuse.Server.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/Effuse.Server",
+      "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
+      "envFile": "${workspaceFolder}/.env",
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_PROVIDER": "sqlite",
+        "SQLITE_FILE": "${workspaceFolder}/database.sqlite"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"

@@ -1,5 +1,7 @@
 version: '3'
 
+dotenv: ['.env']
+
 tasks:
   restore: dotnet restore
 
@@ -45,6 +47,10 @@ tasks:
       - task: migrate
       - task: run
 
+  ui:
+    dir: "{{.TASKFILE_DIR}}/Effuse.UserInterface"
+    cmd: npm run start
+
   test:
     dir: "{{.TASKFILE_DIR}}/Effuse.ApiTests"
     cmd: npm run test
@@ -56,8 +62,16 @@ tasks:
   migrate:server:
     dir: "{{.TASKFILE_DIR}}/Effuse.ServerMigration"
     cmd: npm run migrate:latest
+    env:
+      DATABASE_PROVIDER: sqlite
+      SQLITE_FILE: "{{.TASKFILE_DIR}}/database.sqlite"
 
   migrate:
     cmds:
       - task: migrate:auth
       - task: migrate:server
+
+  publish:
+    cmds:
+      - docker build --platform linux/amd64,linux/arm64,linux/arm/v7 --target effuse-auth:latest --target auth .
+      - docker build --platform linux/amd64,linux/arm64,linux/arm/v7 --target effuse:latest --target server .

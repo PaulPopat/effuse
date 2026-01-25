@@ -1,5 +1,5 @@
 services:
-  app:
+  auth:
     build:
       context: .
       dockerfile: Dockerfile
@@ -25,6 +25,26 @@ services:
 
       UI_ORIGIN: http://localhost:8081
 
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server
+    restart: unless-stopped
+    ports:
+      - 8082:8080
+    environment:
+      DATABASE_PROVIDER: sqlite
+
+      JWT_KEY: secret_jwt_key_that_is_secret_and_hidden
+      JWT_ISSUER: effuse.server
+
+      UI_ORIGIN: http://localhost:8081
+      SERVER_URL: http://server:8080
+      EFFUSE_URL: http://auth:8080
+    volumes:
+      - server:/data
+
   maildev:
     image: maildev/maildev
     restart: unless-stopped
@@ -47,3 +67,4 @@ services:
 
 volumes:
   postgres:
+  server:

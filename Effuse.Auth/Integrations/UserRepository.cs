@@ -5,6 +5,7 @@ using Effuse.Auth.Integrations.Props;
 using Effuse.Auth.Integrations.Tables;
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;
@@ -45,21 +46,20 @@ public class UserRepository
 
     public async Task<User> CreateUser(CreateUserProps props)
     {
-        var stagingResult = await db.Query(StagedUserRow.Table).Select("*").Where("email", props.Email).GetAsync<StagedUserRow>();
-        var staged = stagingResult.First();
+        var staged = await db.Query(StagedUserRow.Table).Select("*").Where("email", props.Email).SafeFirstOrDefault<StagedUserRow>();
         if (staged == null || staged.id != props.Verification)
         {
             throw new UnauthorisedError("CreateUser", "InvalidVerification");
         }
 
-        var existingEmail = await db.Query(UserRow.Table).Select("*").Where("email", props.Email).GetAsync<UserRow>();
-        if (existingEmail.Any())
+        var existingEmail = await db.Query(UserRow.Table).Select("*").Where("email", props.Email).SafeFirstOrDefault<UserRow>();
+        if (existingEmail != null)
         {
             throw new ConflictError("CreateUser", "Email");
         }
 
-        var existingUsername = await db.Query(UserRow.Table).Select("*").Where("username", props.Username).GetAsync<UserRow>();
-        if (existingUsername.Any())
+        var existingUsername = await db.Query(UserRow.Table).Select("*").Where("username", props.Username).SafeFirstOrDefault<UserRow>();
+        if (existingUsername != null)
         {
             throw new ConflictError("CreateUser", "Username");
         }
@@ -90,13 +90,12 @@ public class UserRepository
 
     public async Task<User> GetUser(Guid userId)
     {
-        var entries = await db.Query(UserRow.Table).Select("*").Where("users.id", userId).GetAsync<UserRow>();
-        if (!entries.Any())
+        var row = await db.Query(UserRow.Table).Select("*").Where("users.id", userId).SafeFirstOrDefault<UserRow>();
+        if (row == null)
         {
             throw new NotFoundError("GetUser", userId.ToString());
         }
 
-        var row = entries.Single();
         return new
         (
             id: row.id,
@@ -109,21 +108,17 @@ public class UserRepository
 
     public async Task<User> FindUser(string usernameOrEmail, string password)
     {
-        var found =
-            (
-                await db
-                    .Query(UserRow.Table)
-                    .Select("*")
-                    .Where("users.email", usernameOrEmail)
-                    .GetAsync<UserRow>()
-            ).SingleOrDefault() ??
-            (
-                await db
-                    .Query(UserRow.Table)
-                    .Select("*")
-                    .Where("users.username", usernameOrEmail)
-                    .GetAsync<UserRow>()
-            ).SingleOrDefault();
+        var found = await db
+            .Query(UserRow.Table)
+            .Select("*")
+            .Where("users.email", usernameOrEmail)
+            .SafeFirstOrDefault<UserRow>()
+        ?? await db
+            .Query(UserRow.Table)
+            .Select("*")
+            .Where("users.username", usernameOrEmail)
+            .SafeFirstOrDefault<UserRow>()
+            ;
         if (found == null || !passwordHasher.Verify(password, found.hashed_password))
         {
             throw new UnauthorisedError("FindUser", "InvalidCredentials");

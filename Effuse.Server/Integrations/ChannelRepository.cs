@@ -1,5 +1,6 @@
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using Effuse.Server.Domain;
 using Effuse.Server.Integrations.Tables;
 using SqlKata.Execution;
@@ -50,7 +51,7 @@ public class ChannelRepository
 
   public async Task<Channel> GetChannel(Guid id)
   {
-    var entry = await db.Query(ChannelRow.TableName).Select("*").Where("id", id).FirstOrDefaultAsync<ChannelRow>();
+    var entry = await db.Query(ChannelRow.TableName).Select("*").Where("id", id).SafeFirstOrDefault<ChannelRow>();
     if (entry == null)
     {
       throw new NotFoundError("GetChannel", id.ToString());
@@ -61,7 +62,7 @@ public class ChannelRepository
 
   public async IAsyncEnumerable<Channel> ListChannels()
   {
-    var entries = await db.Query(ChannelRow.TableName).Select("*").GetAsync<ChannelRow>();
+    var entries = await db.Query(ChannelRow.TableName).Select("*").SafeGet<ChannelRow>();
     foreach (var entry in entries)
     {
       yield return MakeChannel(entry);

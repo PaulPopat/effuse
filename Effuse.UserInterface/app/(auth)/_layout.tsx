@@ -8,16 +8,13 @@ export default function AuthLayout() {
   const insets = useSafeAreaInsets();
   return (
     <View
-      style={v(
-        {
-          display: "flex",
-          height: "100%",
-          flexDirection: "column",
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-        },
-        backdrop("surface_a00"),
-      )}
+      style={v({
+        display: "flex",
+        height: "100%",
+        flexDirection: "column",
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      })}
     >
       <ScrollView>
         <Slot />

@@ -1,11 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
-(
-  cd /migrations &&
-  npm run migrate:latest
-)
-
-(
-  cd /app &&
-  eval "$1"
-)
+npm run migrate:latest --prefix /migrations
+eval "$APP_FILE"

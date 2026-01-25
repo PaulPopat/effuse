@@ -1,5 +1,6 @@
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using Effuse.Server.Domain;
 using Effuse.Server.Integrations.Tables;
 using SqlKata.Execution;
@@ -56,8 +57,9 @@ public class RoleRepository
 
       return found;
     }
-    catch
+    catch (Exception error)
     {
+      Console.WriteLine(error);
       return await CreateFullRole(roleId, "ServerAdmin", [new("*", "*")]);
     }
   }
@@ -73,7 +75,7 @@ public class RoleRepository
       .Query(RolePermissionRow.TableName)
       .Select("*")
       .Where($"{RolePermissionRow.TableName}.permission", permission.ToString())
-      .FirstOrDefaultAsync<RolePermissionRow>();
+      .SafeFirstOrDefault<RolePermissionRow>();
 
     if (match == null) return null;
 
@@ -85,7 +87,7 @@ public class RoleRepository
     var roleRows = await db
       .Query(RoleRow.TableName)
       .Select("*")
-      .GetAsync<RoleRow>();
+      .SafeGet<RoleRow>();
 
     foreach (var roleRow in roleRows)
     {
@@ -94,7 +96,7 @@ public class RoleRepository
         .Query(RolePermissionRow.TableName)
         .Select("*")
         .Where($"{RolePermissionRow.TableName}.role", roleRow.id)
-        .GetAsync<RolePermissionRow>();
+        .SafeGet<RolePermissionRow>();
 
       yield return new
       (
@@ -114,7 +116,7 @@ public class RoleRepository
       .Query(RoleRow.TableName)
       .Select("*")
       .Where($"{RoleRow.TableName}.id", roleId)
-      .FirstOrDefaultAsync<RoleRow>();
+      .SafeFirstOrDefault<RoleRow>();
 
     if (roleRow == null)
     {
@@ -125,7 +127,7 @@ public class RoleRepository
       .Query(RolePermissionRow.TableName)
       .Select("*")
       .Where($"{RolePermissionRow.TableName}.role", roleId)
-      .GetAsync<RolePermissionRow>();
+      .SafeGet<RolePermissionRow>();
 
     return new
     (
@@ -144,7 +146,7 @@ public class RoleRepository
       .Query(RoleRow.TableName)
       .Select("*")
       .Where($"{RoleRow.TableName}.id", role.Id)
-      .FirstOrDefaultAsync<RoleRow>();
+      .SafeFirstOrDefault<RoleRow>();
 
     if (existing == null)
     {

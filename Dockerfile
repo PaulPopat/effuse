@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
 WORKDIR /app
 
@@ -14,11 +14,17 @@ WORKDIR /app/Effuse.Server
 
 RUN dotnet publish -o out
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 as runner
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine as runner
 
-RUN apt-get install nodejs -y
+RUN apk add --update nodejs npm
 
-COPY ./docker-start.sh /docker-start.sh
+WORKDIR /entry
+COPY ./docker-startup.sh ./docker-startup.sh
+RUN chmod +x ./docker-startup.sh
+
+EXPOSE 8080
+
+ENTRYPOINT [ "/entry/docker-startup.sh" ]
 
 FROM runner AS auth
 
@@ -27,24 +33,17 @@ COPY ./Effuse.AuthMigration /migrations
 WORKDIR /migrations
 RUN npm install
 
-WORKDIR /app
-
-EXPOSE 8080
-
-COPY --from=build /app/Effuse.Auth/out .
-
-ENTRYPOINT ["/docker-start.sh", "./Effuse.Auth"]
+COPY --from=build /app/Effuse.Auth/out /app
+ENV APP_FILE="/app/Effuse.Auth"
 
 FROM runner AS server
+
+ENV SQLITE_FILE=/data/db.sqlite
 
 COPY ./Effuse.ServerMigration /migrations
 
 WORKDIR /migrations
 RUN npm install
 
-WORKDIR /app
-
-EXPOSE 8080
-
-COPY --from=build /app/Effuse.Server/out .
-ENTRYPOINT ["/docker-start.sh", "./Effuse.Server"]
+COPY --from=build /app/Effuse.Server/out /app
+ENV APP_FILE="/app/Effuse.Server"

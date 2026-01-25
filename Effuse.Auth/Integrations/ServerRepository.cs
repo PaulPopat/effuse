@@ -2,6 +2,7 @@ using Effuse.Auth.Domain;
 using Effuse.Auth.Integrations.Tables;
 using Effuse.Core.Errors;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;
@@ -15,7 +16,7 @@ public class ServerRepository(QueryFactory db, GuidService guidService) : IServe
             .Select("*")
             .Where("server_url", server_url)
             .Where("user_id", user.Id)
-            .GetAsync<UserServerRow>();
+            .SafeGet<UserServerRow>();
         if (existing.Any())
         {
             throw new ConflictError("AddUserServer", "ServerAlreadyRegistered");
@@ -36,7 +37,7 @@ public class ServerRepository(QueryFactory db, GuidService guidService) : IServe
             .Query(UserServerRow.Table)
             .Select("*")
             .Where("user_id", user.Id)
-            .GetAsync<UserServerRow>();
+            .SafeGet<UserServerRow>();
 
         return found.Select(f => new UserServer(user, f.server_url, f.server_name)).ToList();
     }

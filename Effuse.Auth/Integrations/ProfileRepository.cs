@@ -2,6 +2,7 @@ using Effuse.Auth.Domain;
 using Effuse.Auth.Errors;
 using Effuse.Auth.Integrations.Tables;
 using Effuse.Core.Integrations;
+using Effuse.Core.Utils;
 using SqlKata.Execution;
 
 namespace Effuse.Auth.Integrations;
@@ -14,7 +15,7 @@ public class ProfileRepository(QueryFactory db, GuidService guidService) : IProf
             .Query(UserProfileRow.Table)
             .Select("*")
             .Where("user_id", user.Id)
-            .FirstOrDefaultAsync<UserProfileRow>();
+            .SafeFirstOrDefault<UserProfileRow>();
 
         if (entry == null)
         {
