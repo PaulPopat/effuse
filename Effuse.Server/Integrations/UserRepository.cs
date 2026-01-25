@@ -21,7 +21,6 @@ public class UserRepository
       throw new ConflictError("CreateUser", "Id");
     }
 
-
     var now = dateTimeService.Now;
     await db.Query(UserRow.TableName).InsertAsync(new UserRow
     {
@@ -76,8 +75,6 @@ public class UserRepository
       throw new NotFoundError("CreateUser", user.Id.ToString());
     }
 
-
-    var now = dateTimeService.Now;
     await db.Query(UserRow.TableName).Where("id", user.Id).UpdateAsync(new UserRow
     {
       id = existing.id,

@@ -1,4 +1,4 @@
-using Effuse.Core.Utils;
+using Effuse.Core.Errors;
 
 namespace Effuse.Server.Authorisation;
 
@@ -10,6 +10,12 @@ public class Resource(string path, IDictionary<string, object?> actionArguments)
     {
       if (!part.StartsWith('{')) return part;
       var name = part.TrimStart('{').TrimEnd('}');
-      return actionArguments.GetKey<string>(name);
+      var result = actionArguments[name];
+      if (result == null || result is not string stringResult)
+      {
+        throw new UnauthorisedError("Unknown", "InvalidServerStructure");
+      }
+
+      return stringResult;
     }));
 }

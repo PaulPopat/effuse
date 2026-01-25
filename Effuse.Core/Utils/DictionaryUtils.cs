@@ -2,7 +2,7 @@ namespace Effuse.Core.Utils;
 
 public static class DictionaryUtils
 {
-  public static T GetKey<T>(this IDictionary<string, object?> dict, string key)
+  public static T GetKey<T>(this IDictionary<string, object> dict, string key)
   {
     var result = dict[key];
 
@@ -12,10 +12,5 @@ public static class DictionaryUtils
     }
 
     return (T)result;
-  }
-
-  public static T GetKeyNotNullable<T>(this IDictionary<string, object> dict, string key)
-  {
-    return (T)dict[key];
   }
 }

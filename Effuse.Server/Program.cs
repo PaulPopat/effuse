@@ -67,6 +67,8 @@ builder.Services.AddSingleton<IEnvService, EnvService>();
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IEventClient, EventClient>();
+builder.Services.AddTransient<IVoiceServerManager, VoiceServerManager>();
 builder.Services.AddTransient<DefaultInviter>();
 
 builder.Services.AddHttpContextAccessor();

@@ -16,7 +16,9 @@ public class ChannelController
 (
   IChannelRepository channelRepository,
   IUserFetcher userFetcher,
-  IUserRepository userRepository
+  IUserRepository userRepository,
+  IVoiceServerManager voiceServerManager,
+  IEventClient eventClient
 ) : ControllerBase
 {
   private static object ChannelModel(Channel channel)
@@ -81,5 +83,35 @@ public class ChannelController
     var users = userRepository.ListUsers().Where(u => UserMayAccessChannel(u, channel));
 
     return Ok(await users.Select(u => new { UserId = u.Id }).ToListAsync());
+  }
+
+  [EnableCors(Cors.EffuseOrigins)]
+  [RequirePermission("channels:join", "/voice/{channelId}")]
+  [HttpGet("/voice/{channelId}/sip")]
+  public async Task<IActionResult> GetVoiceChanneConnectionAsync(string channelId)
+  {
+    var channel = await channelRepository.GetChannel(Guid.Parse(channelId));
+    if (channel is not VoiceChannel voiceChannel)
+    {
+      throw new NotFoundError("GetVoiceChanneConnection", channelId);
+    }
+
+    var user = await userFetcher.GetCurrentUser();
+    var details = await voiceServerManager.ConnectToChannel(voiceChannel);
+    await eventClient.Broadcast
+    (
+      new
+      {
+        Event = "voice:channel:userjoin",
+        Detail = new { UserId = user.Id.ToString() }
+      },
+      new PermissionRequest("channels:listen", $"/voice/{channelId}")
+    );
+
+    return Ok(new
+    {
+      Url = details.BaseUrl,
+      Port = details.Port,
+    });
   }
 }
