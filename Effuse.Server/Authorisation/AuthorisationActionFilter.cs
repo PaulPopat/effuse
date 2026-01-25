@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Effuse.Server.Authorisation;
 
-public class AuthorisationActionFilter(ITokenService tokenService) : IAsyncActionFilter
+public class AuthorisationActionFilter(IUserFetcher userFetcher) : IAsyncActionFilter
 {
   public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
   {
@@ -28,18 +28,12 @@ public class AuthorisationActionFilter(ITokenService tokenService) : IAsyncActio
       throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
     }
 
-    var token = context.HttpContext.Request.Headers.Authorization.Single()?.Replace("Bearer ", string.Empty);
-    if (token == null)
-    {
-      throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");
-    }
-
     try
     {
       var action = attribute.Action;
       var resource = new Resource(attribute.Resource, context.ActionArguments);
       var request = new PermissionRequest(action, resource.Rendered);
-      var user = await tokenService.ValidateAccessToken(token);
+      var user = await userFetcher.GetCurrentUser();
       if (!user.Role.Permissions.Any(p => p.Allows(request)))
       {
         throw new UnauthorisedError(context.HttpContext.Request.Path, "InvalidPermission");

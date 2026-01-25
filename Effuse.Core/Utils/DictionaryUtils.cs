@@ -13,4 +13,9 @@ public static class DictionaryUtils
 
     return (T)result;
   }
+
+  public static T GetKeyNotNullable<T>(this IDictionary<string, object> dict, string key)
+  {
+    return (T)dict[key];
+  }
 }

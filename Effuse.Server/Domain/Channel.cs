@@ -7,4 +7,6 @@ public abstract class Channel(Guid id, string name, DateTime createdOn)
   public string Name => name;
 
   public DateTime CreatedOn => createdOn;
+
+  public abstract string TypeName { get; }
 }

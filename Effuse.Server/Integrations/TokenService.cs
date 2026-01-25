@@ -51,9 +51,9 @@ public class TokenService
     try
     {
       var data = await jwtService.ParseToken(token);
-      if (data.GetKey<string>("Grant") != AccessGrant) throw new Exception("Invalid Grant Type");
+      if (data.GetKeyNotNullable<string>("Grant") != AccessGrant) throw new Exception("Invalid Grant Type");
 
-      var userId = data.GetKey<string>("UserId");
+      var userId = data.GetKeyNotNullable<string>("UserId");
       return await userRepository.GetUser(Guid.Parse(userId));
     }
     catch (Exception error)
@@ -68,9 +68,9 @@ public class TokenService
     try
     {
       var data = await jwtService.ParseToken(token);
-      if (data.GetKey<string>("Grant") != InviteGrant) throw new Exception("Invalid Grant Type");
+      if (data.GetKeyNotNullable<string>("Grant") != InviteGrant) throw new Exception("Invalid Grant Type");
 
-      var roleId = data.GetKey<string>("RoleId");
+      var roleId = data.GetKeyNotNullable<string>("RoleId");
       return await roleRepository.GetRole(Guid.Parse(roleId));
     }
     catch (Exception error)
@@ -85,9 +85,9 @@ public class TokenService
     try
     {
       var data = await jwtService.ParseToken(token);
-      if (data.GetKey<string>("Grant") != RefreshGrant) throw new Exception("Invalid Grant Type");
+      if (data.GetKeyNotNullable<string>("Grant") != RefreshGrant) throw new Exception("Invalid Grant Type");
 
-      var userId = data.GetKey<string>("UserId");
+      var userId = data.GetKeyNotNullable<string>("UserId");
       return await userRepository.GetUser(Guid.Parse(userId));
     }
     catch (Exception error)
