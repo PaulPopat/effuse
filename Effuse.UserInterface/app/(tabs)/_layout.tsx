@@ -3,7 +3,7 @@ import { MeProvider, use_auth, use_me } from "@/state";
 import { Redirect, Slot, useRouter } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Server } from "lucide-react-native";
+import { PlusCircle, Server } from "lucide-react-native";
 import {
   backdrop,
   center,
@@ -17,7 +17,7 @@ import {
   ThemeColour,
   v,
 } from "@/theme";
-import { Button } from "@/components/atoms/button";
+import { Button, IconButton } from "@/components/atoms/button";
 import { Card } from "@/components/atoms/panel";
 
 const styles = StyleSheet.create({
@@ -62,14 +62,12 @@ function LayoutInner() {
             </Pressable>
           ))}
         </ScrollView>
-        <Button
-          backdrop="primary_a10"
-          content="light_a0"
+        <IconButton
           press={() => router.push("/servers/join")}
-          small
-        >
-          +
-        </Button>
+          colour="primary_a50"
+          hover="primary_a30"
+          icon={PlusCircle}
+        />
       </Card>
       <View style={styles.content_container}>
         <Slot />
