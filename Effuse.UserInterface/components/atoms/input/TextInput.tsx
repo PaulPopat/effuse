@@ -15,6 +15,7 @@ export type TextInputProps = {
   sensitive?: boolean;
   auto_complete?: RnTextInputProps["autoComplete"];
   keyboard_type?: RnTextInputProps["keyboardType"];
+  auto_capitalise?: RnTextInputProps["autoCapitalize"];
 };
 
 export const TextInput = (props: TextInputProps) => {
@@ -27,6 +28,7 @@ export const TextInput = (props: TextInputProps) => {
       onBlur={props.blur}
       autoComplete={props.auto_complete}
       keyboardType={props.keyboard_type}
+      autoCapitalize={props.auto_capitalise}
     />
   );
 };

@@ -4,6 +4,7 @@ import { Row, RowFill, Container } from "@/components/atoms/layout";
 import { Heading } from "@/components/atoms/typography";
 import {
   FormControl,
+  FormError,
   FormProvider,
   SubmitButton,
 } from "@/components/molecules/form";
@@ -36,7 +37,16 @@ export default function () {
         </Button>
       </Row>
       <FormProvider schema={Form} submit={(v) => auth.start_register(v.email)}>
-        <FormControl name="email" as={TextInput}>
+        <FormError>
+          There was a problem submitting your email. Please try again.
+        </FormError>
+        <FormControl
+          name="email"
+          as={TextInput}
+          auto_complete="email"
+          keyboard_type="email-address"
+          auto_capitalise="none"
+        >
           Email Address
         </FormControl>
         <SubmitButton backdrop="primary_a40" content="surface_a00">

@@ -3,6 +3,7 @@ import { Container } from "@/components/atoms/layout";
 import { Heading } from "@/components/atoms/typography";
 import {
   FormControl,
+  FormError,
   FormProvider,
   SubmitButton,
 } from "@/components/molecules/form";
@@ -41,13 +42,33 @@ export default function () {
           auth.register(v.username, query.email, v.password, query.token)
         }
       >
-        <FormControl name="username" as={TextInput}>
+        <FormError>
+          There was a problem creating your account. Please try again.
+        </FormError>
+        <FormControl
+          name="username"
+          as={TextInput}
+          auto_capitalise="none"
+          auto_complete="username-new"
+        >
           Username
         </FormControl>
-        <FormControl name="password" as={TextInput} sensitive>
+        <FormControl
+          name="password"
+          as={TextInput}
+          auto_capitalise="none"
+          auto_complete="password-new"
+          sensitive
+        >
           Password
         </FormControl>
-        <FormControl name="repeat_password" as={TextInput} sensitive>
+        <FormControl
+          name="repeat_password"
+          as={TextInput}
+          auto_capitalise="none"
+          auto_complete="password-new"
+          sensitive
+        >
           Repeat Password
         </FormControl>
         <SubmitButton backdrop="primary_a40" content="surface_a00">

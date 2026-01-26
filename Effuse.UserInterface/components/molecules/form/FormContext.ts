@@ -9,6 +9,7 @@ export type FormContext = {
   submit: () => void;
   submitted: boolean;
   loading: boolean;
+  did_error: boolean;
 };
 
 export const FormContext = React.createContext<FormContext | undefined>(

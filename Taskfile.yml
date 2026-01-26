@@ -23,6 +23,8 @@ tasks:
     cmd: dotnet run --project ./Effuse.Auth/Effuse.Auth.csproj
     env:
       ASPNETCORE_ENVIRONMENT: Development
+      DATABASE_PROVIDER: sqlite
+      SQLITE_FILE: "{{.TASKFILE_DIR}}/Effuse.Auth/database.sqlite"
 
   run:server:
     deps:
@@ -30,6 +32,8 @@ tasks:
     cmd: dotnet run --project ./Effuse.Server/Effuse.Server.csproj
     env:
       ASPNETCORE_ENVIRONMENT: Development
+      DATABASE_PROVIDER: sqlite
+      SQLITE_FILE: "{{.TASKFILE_DIR}}/Effuse.Server/database.sqlite"
 
   run:all:
     internal: true
@@ -50,6 +54,8 @@ tasks:
   ui:
     dir: "{{.TASKFILE_DIR}}/Effuse.UserInterface"
     cmd: npm run start
+    env:
+      EXPO_PUBLIC_AUTH_BASE: "{{.EFFUSE_URL}}"
 
   test:
     dir: "{{.TASKFILE_DIR}}/Effuse.ApiTests"
@@ -58,13 +64,16 @@ tasks:
   migrate:auth:
     dir: "{{.TASKFILE_DIR}}/Effuse.AuthMigration"
     cmd: npm run migrate:latest
+    env:
+      DATABASE_PROVIDER: sqlite
+      SQLITE_FILE: "{{.TASKFILE_DIR}}/Effuse.Auth/database.sqlite"
 
   migrate:server:
     dir: "{{.TASKFILE_DIR}}/Effuse.ServerMigration"
     cmd: npm run migrate:latest
     env:
       DATABASE_PROVIDER: sqlite
-      SQLITE_FILE: "{{.TASKFILE_DIR}}/database.sqlite"
+      SQLITE_FILE: "{{.TASKFILE_DIR}}/Effuse.Server/database.sqlite"
 
   migrate:
     cmds:

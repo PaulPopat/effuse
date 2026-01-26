@@ -47,10 +47,10 @@ switch (Env.GetEnvironmentVariable("DATABASE_PROVIDER"))
             string.Format
             (
                 "Host={0};Username={1};Password={2};Database={3}",
-                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_HOST"),
-                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_USER"),
-                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_PASSWORD"),
-                Env.GetEnvironmentVariable("EFFUSE_POSTGRES_DB")
+                Env.GetEnvironmentVariable("POSTGRES_HOST"),
+                Env.GetEnvironmentVariable("POSTGRES_USER"),
+                Env.GetEnvironmentVariable("POSTGRES_PASSWORD"),
+                Env.GetEnvironmentVariable("POSTGRES_DB")
             )
         ),
         new PostgresCompiler()

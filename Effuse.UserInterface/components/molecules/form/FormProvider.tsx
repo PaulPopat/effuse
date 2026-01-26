@@ -13,8 +13,11 @@ export const FormProvider = <T extends Record<string, FormValue>>(
   props: FormProviderProps<T>,
 ) => {
   const [value, set_value] = React.useState<Record<string, FormValue>>({});
-  const [submitted, set_submited] = React.useState(false);
-  const [loading, set_loading] = React.useState(false);
+  const [status, set_status] = React.useState({
+    submitted: false,
+    loading: false,
+    did_error: false,
+  });
 
   const validation = React.useMemo(
     () => props.schema.safeParse(value),
@@ -30,26 +33,27 @@ export const FormProvider = <T extends Record<string, FormValue>>(
         null,
       submit: async () => {
         try {
-          set_loading(true);
-          set_submited(true);
-          if (!validation.success) return;
+          set_status({ loading: true, submitted: true, did_error: false });
+          if (!validation.success) {
+            return set_status({
+              loading: false,
+              submitted: true,
+              did_error: false,
+            });
+          }
+
           await props.submit(validation.data);
-        } finally {
-          set_loading(false);
+          set_status({ loading: false, submitted: true, did_error: false });
+        } catch (err) {
+          console.error(err);
+          set_status({ loading: false, submitted: true, did_error: true });
         }
       },
-      submitted,
-      loading,
+      submitted: status.submitted,
+      loading: status.loading,
+      did_error: status.did_error,
     }),
-    [
-      value,
-      set_value,
-      validation,
-      props.submit,
-      submitted,
-      loading,
-      set_loading,
-    ],
+    [value, set_value, validation, props.submit, status, set_status],
   );
 
   return (

@@ -31,6 +31,7 @@ public class UserRepository
         });
 
         var messageBuilder = new StringBuilder(env.VerificationEmailBody);
+        messageBuilder.Replace("$EFFUSE_BASE", env.EffuseUrl);
         messageBuilder.Replace("$TOKEN", id.ToString());
         messageBuilder.Replace("$EMAIL", email);
 
