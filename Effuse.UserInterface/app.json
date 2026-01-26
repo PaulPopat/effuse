@@ -46,6 +46,12 @@
           "configureAndroidBackup": true,
           "faceIDPermission": "Allow Effuse to access your Face ID biometric data."
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Montserrat-VariableFont_wght.ttf"]
+        }
       ]
     ],
     "experiments": {

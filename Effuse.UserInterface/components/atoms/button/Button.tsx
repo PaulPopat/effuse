@@ -10,6 +10,7 @@ import {
   ThemeColour,
   v,
 } from "@/theme";
+import { LucideIcon } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
@@ -19,6 +20,7 @@ export type ButtonProps = React.PropsWithChildren & {
   content: ThemeColour;
   small?: boolean;
   loading?: boolean;
+  icon?: LucideIcon;
 };
 
 export const Button = (props: ButtonProps) => {
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
     margin("medium", "none"),
     shadowed(),
     center("row"),
+    { width: "100%" },
   ),
   button_small: v(padding("medium")),
   button_text: t(text("medium")),

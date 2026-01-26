@@ -18,13 +18,13 @@ public class ChannelRepository
   {
     return row.type switch
     {
-      ChannelType.voice => new VoiceChannel
+      "voice" => new VoiceChannel
       (
         id: row.id,
         name: row.name,
         createdOn: row.created_on
       ),
-      ChannelType.message => new MessageChannel
+      "message" => new MessageChannel
       (
         id: row.id,
         name: row.name,
@@ -42,7 +42,7 @@ public class ChannelRepository
       id = guidService.NewGuid,
       name = name,
       created_on = now,
-      type = type,
+      type = type.ToString(),
     };
     await db.Query(ChannelRow.TableName).InsertAsync(row);
 

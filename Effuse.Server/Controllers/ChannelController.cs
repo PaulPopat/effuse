@@ -54,7 +54,7 @@ public class ChannelController
 
   [EnableCors(Cors.EffuseOrigins)]
   [RequirePermission("channels:create", "/{channelType}")]
-  [HttpPost("/{channelType}")]
+  [HttpPost("{channelType}")]
   public async Task<IActionResult> PostChannelAsync(string channelType, [FromBody] PostChannelModel model)
   {
     var type = channelType switch
@@ -71,7 +71,7 @@ public class ChannelController
 
   [EnableCors(Cors.EffuseOrigins)]
   [RequirePermission("channels:listusers", "/{channelType}/{channelId}")]
-  [HttpGet("/{channelType}/{channelId}/users")]
+  [HttpGet("{channelType}/{channelId}/users")]
   public async Task<IActionResult> GetChannelUsersAsync(string channelType, string channelId)
   {
     var channel = await channelRepository.GetChannel(Guid.Parse(channelId));
@@ -87,7 +87,7 @@ public class ChannelController
 
   [EnableCors(Cors.EffuseOrigins)]
   [RequirePermission("channels:join", "/voice/{channelId}")]
-  [HttpGet("/voice/{channelId}/sip")]
+  [HttpGet("voice/{channelId}/sip")]
   public async Task<IActionResult> GetVoiceChanneConnectionAsync(string channelId)
   {
     var channel = await channelRepository.GetChannel(Guid.Parse(channelId));

@@ -69,6 +69,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IEventClient, EventClient>();
 builder.Services.AddTransient<IVoiceServerManager, VoiceServerManager>();
 builder.Services.AddTransient<IUserFetcher, UserFetcher>();
+builder.Services.AddTransient<IChannelRepository, ChannelRepository>();
 builder.Services.AddTransient<DefaultInviter>();
 
 builder.Services.AddHttpContextAccessor();

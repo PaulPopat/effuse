@@ -7,5 +7,5 @@ public class ChannelRow
   public required Guid id { get; set; }
   public required string name { get; set; }
   public required DateTime created_on { get; set; }
-  public required ChannelType type { get; set; }
+  public required string type { get; set; }
 }

@@ -12,7 +12,13 @@ namespace Effuse.Server.Controllers;
 
 [ApiController]
 [Route("sessions")]
-public class SessionController(IUserRepository userRepository, ITokenService tokenService, IHttpContextAccessor httpContextAccessor) : ControllerBase
+public class SessionController
+(
+  IUserRepository userRepository,
+  ITokenService tokenService,
+  IHttpContextAccessor httpContextAccessor,
+  IUserFetcher userFetcher
+) : ControllerBase
 {
   private HttpContext? Context => httpContextAccessor.HttpContext;
 
@@ -50,5 +56,15 @@ public class SessionController(IUserRepository userRepository, ITokenService tok
 
     var user = await tokenService.ValidateRefreshToken(token);
     return Ok(await CreateSessionResponse(user));
+  }
+
+  [EnableCors(Cors.EffuseOrigins)]
+  [RequirePermission("self:view", "/")]
+  [HttpGet("permissions")]
+  public async Task<IActionResult> GetSessionPermissionsAsync()
+  {
+    var user = await userFetcher.GetCurrentUser();
+
+    return Ok(user.Role.Permissions.Select(p => new { p.Action, p.Resource }).ToList());
   }
 }

@@ -50,7 +50,7 @@ export const FormProvider = <T extends Record<string, FormValue>>(
 
           await props.submit(validation.data);
           set_value({});
-          set_status({ loading: false, submitted: true, error: undefined });
+          set_status({ loading: false, submitted: false, error: undefined });
         } catch (err) {
           console.error(err);
           set_status({ loading: false, submitted: true, error: err as Error });

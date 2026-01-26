@@ -16,7 +16,7 @@ export const Heading = (props: HeadingProps) => {
 };
 
 const styles = StyleSheet.create({
-  heading: t({ width: "100%" }, margin("large", "none")),
+  heading: t({ width: "100%" }, margin("none", "none", "large")),
   "1": t(text("extra_large")),
   "2": t(text("large")),
 });

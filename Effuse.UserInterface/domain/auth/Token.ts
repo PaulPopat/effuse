@@ -7,6 +7,10 @@ export class Token {
     this.#value = value;
   }
 
+  get Value() {
+    return this.#value;
+  }
+
   toString() {
     return [this.#type, this.#value].join(" ");
   }

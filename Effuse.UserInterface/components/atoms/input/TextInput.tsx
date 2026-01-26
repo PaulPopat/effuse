@@ -21,7 +21,7 @@ export type TextInputProps = {
 export const TextInput = (props: TextInputProps) => {
   return (
     <RnTextInput
-      value={props.value?.toString()}
+      value={props.value?.toString() ?? ""}
       onChangeText={(text) => props.change(text)}
       style={styles.input}
       secureTextEntry={props.sensitive}

@@ -60,7 +60,7 @@ const use_setup = suspended(async (session: Session) => {
 
 export const MeProvider = (props: React.PropsWithChildren) => {
   const { session } = use_auth();
-  if (!session) throw new Error("Must be logged in");
+  if (!session) return <></>;
   const initial = use_setup(session);
 
   const [servers, set_servers] = React.useState(initial.servers);

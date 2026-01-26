@@ -1,6 +1,6 @@
 import { Image } from "@/components/atoms/image";
-import { MeProvider, use_me } from "@/state";
-import { Slot, useRouter } from "expo-router";
+import { MeProvider, use_auth, use_me } from "@/state";
+import { Redirect, Slot, useRouter } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Server } from "lucide-react-native";
@@ -18,6 +18,7 @@ import {
   v,
 } from "@/theme";
 import { Button } from "@/components/atoms/button";
+import { Card } from "@/components/atoms/panel";
 
 const styles = StyleSheet.create({
   outer_container: {
@@ -25,14 +26,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: "100%",
   },
-  servers_container: v(
-    backdrop("surface_a10"),
-    margin("medium"),
-    shadowed(),
-    center("column"),
-  ),
   servers_scroller: { flex: 1 },
-  server_button: v(center("column"), margin("medium"), gap("medium")),
+  server_button: v(center("column"), gap("medium")),
   server_icon: v(padding("medium"), backdrop("primary_a10"), shadowed(), {
     overflow: "hidden",
   }),
@@ -46,7 +41,7 @@ function LayoutInner() {
 
   return (
     <View style={styles.outer_container}>
-      <View style={styles.servers_container}>
+      <Card>
         <ScrollView style={styles.servers_scroller}>
           {me.servers.map((s) => (
             <Pressable
@@ -73,9 +68,9 @@ function LayoutInner() {
           press={() => router.push("/servers/join")}
           small
         >
-          Add
+          +
         </Button>
-      </View>
+      </Card>
       <View style={styles.content_container}>
         <Slot />
       </View>
@@ -84,6 +79,9 @@ function LayoutInner() {
 }
 
 export default function TabLayout() {
+  const auth = use_auth();
+  if (!auth.session) return <Redirect href="/login" />;
+
   return (
     <MeProvider>
       <LayoutInner />
