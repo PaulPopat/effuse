@@ -12,17 +12,24 @@ import {
   v,
 } from "@/theme";
 
-export type FormErrorProps = React.PropsWithChildren;
+export type FormErrorProps = {
+  children: React.ReactNode | ((error: Error) => React.ReactNode);
+};
 
 export const FormError = (props: FormErrorProps) => {
   const ctx = React.useContext(FormContext);
   if (!ctx) throw new Error("Must be within a form provider");
 
-  if (!ctx.did_error) return null;
+  if (!ctx.error) return null;
+
+  const children =
+    typeof props.children === "function"
+      ? props.children(ctx.error)
+      : props.children;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{props.children}</Text>
+      <Text style={styles.text}>{children}</Text>
     </View>
   );
 };

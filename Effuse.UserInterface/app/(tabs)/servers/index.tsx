@@ -4,6 +4,7 @@ import { Container } from "@/components/atoms/layout";
 import { Heading } from "@/components/atoms/typography";
 import {
   FormControl,
+  FormError,
   FormProvider,
   SubmitButton,
 } from "@/components/molecules/form";
@@ -45,6 +46,7 @@ export default function () {
             add_server(v.server_url, v.server_name, v.invite_token)
           }
         >
+          <FormError>There was an error joining the server.</FormError>
           <FormControl name="server_url" as={TextInput}>
             Server URL
           </FormControl>

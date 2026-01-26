@@ -16,7 +16,7 @@ export const FormProvider = <T extends Record<string, FormValue>>(
   const [status, set_status] = React.useState({
     submitted: false,
     loading: false,
-    did_error: false,
+    error: undefined as Error | undefined,
   });
 
   const validation = React.useMemo(
@@ -33,25 +33,25 @@ export const FormProvider = <T extends Record<string, FormValue>>(
         null,
       submit: async () => {
         try {
-          set_status({ loading: true, submitted: true, did_error: false });
+          set_status({ loading: true, submitted: true, error: undefined });
           if (!validation.success) {
             return set_status({
               loading: false,
               submitted: true,
-              did_error: false,
+              error: undefined,
             });
           }
 
           await props.submit(validation.data);
-          set_status({ loading: false, submitted: true, did_error: false });
+          set_status({ loading: false, submitted: true, error: undefined });
         } catch (err) {
           console.error(err);
-          set_status({ loading: false, submitted: true, did_error: true });
+          set_status({ loading: false, submitted: true, error: err as Error });
         }
       },
       submitted: status.submitted,
       loading: status.loading,
-      did_error: status.did_error,
+      error: status.error,
     }),
     [value, set_value, validation, props.submit, status, set_status],
   );
