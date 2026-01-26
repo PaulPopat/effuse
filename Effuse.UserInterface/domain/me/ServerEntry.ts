@@ -1,4 +1,5 @@
 export type ServerEntryProps = {
+  id: string;
   server_url: string;
   server_name: string;
 };
@@ -8,6 +9,10 @@ export class ServerEntry {
 
   constructor(props: ServerEntryProps) {
     this.#props = props;
+  }
+
+  get Id() {
+    return this.#props.id;
   }
 
   get Url() {

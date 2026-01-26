@@ -6,5 +6,5 @@ public interface IServerRepository
 {
     Task<IList<UserServer>> GetUserServers(User user);
 
-    Task AddUserServer(User user, string server_url, string server_name);
+    Task<UserServer> AddUserServer(User user, string server_url, string server_name);
 }

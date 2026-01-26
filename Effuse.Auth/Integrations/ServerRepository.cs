@@ -9,7 +9,7 @@ namespace Effuse.Auth.Integrations;
 
 public class ServerRepository(QueryFactory db, GuidService guidService) : IServerRepository
 {
-    public async Task AddUserServer(User user, string server_url, string server_name)
+    public async Task<UserServer> AddUserServer(User user, string server_url, string server_name)
     {
         var existing = await db
             .Query(UserServerRow.Table)
@@ -22,13 +22,17 @@ public class ServerRepository(QueryFactory db, GuidService guidService) : IServe
             throw new ConflictError("AddUserServer", "ServerAlreadyRegistered");
         }
 
+        var id = guidService.NewGuid;
+
         await db.Query(UserServerRow.Table).InsertAsync(new UserServerRow
         {
-            id = guidService.NewGuid,
+            id = id,
             user_id = user.Id,
             server_url = server_url,
             server_name = server_name,
         });
+
+        return new UserServer(user, id, server_url, server_name);
     }
 
     public async Task<IList<UserServer>> GetUserServers(User user)
@@ -39,6 +43,6 @@ public class ServerRepository(QueryFactory db, GuidService guidService) : IServe
             .Where("user_id", user.Id)
             .SafeGet<UserServerRow>();
 
-        return found.Select(f => new UserServer(user, f.server_url, f.server_name)).ToList();
+        return found.Select(f => new UserServer(user, f.id, f.server_url, f.server_name)).ToList();
     }
 }

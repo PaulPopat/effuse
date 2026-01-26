@@ -7,17 +7,23 @@ export type FormProviderProps<T extends Record<string, FormValue>> =
   React.PropsWithChildren & {
     schema: z.ZodType<T>;
     submit: (value: T) => Promise<any>;
+    initial?: Record<string, FormValue>;
   };
 
 export const FormProvider = <T extends Record<string, FormValue>>(
   props: FormProviderProps<T>,
 ) => {
-  const [value, set_value] = React.useState<Record<string, FormValue>>({});
+  const [raw_value, set_value] = React.useState<Record<string, FormValue>>({});
   const [status, set_status] = React.useState({
     submitted: false,
     loading: false,
     error: undefined as Error | undefined,
   });
+
+  const value = React.useMemo(
+    () => ({ ...raw_value, ...props.initial }),
+    [props.initial, raw_value],
+  );
 
   const validation = React.useMemo(
     () => props.schema.safeParse(value),
@@ -43,6 +49,7 @@ export const FormProvider = <T extends Record<string, FormValue>>(
           }
 
           await props.submit(validation.data);
+          set_value({});
           set_status({ loading: false, submitted: true, error: undefined });
         } catch (err) {
           console.error(err);

@@ -61,6 +61,7 @@ public class MeController
             (
                 server => new
                 {
+                    Id = server.Id,
                     ServerUrl = server.ServerUrl,
                     ServerName = server.ServerName,
                 }
@@ -79,8 +80,13 @@ public class MeController
             throw new UnauthorisedError("PostUserServer", "ServerAccessDenied");
         }
 
-        await serverRepository.AddUserServer(session.User, model.ServerUrl, model.ServerName);
+        var server = await serverRepository.AddUserServer(session.User, model.ServerUrl, model.ServerName);
 
-        return Ok(new { });
+        return Ok(new
+        {
+            Id = server.Id,
+            ServerUrl = server.ServerUrl,
+            ServerName = server.ServerName,
+        });
     }
 }

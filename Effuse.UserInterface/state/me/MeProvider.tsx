@@ -8,10 +8,15 @@ import { ServerEntry } from "@/domain/me";
 import { CurrentProfile } from "@/domain/me/CurrentProfile";
 import React from "react";
 import { MeContext } from "./MeContext";
+import { useRouter } from "expo-router";
 
-const ServersModel = z.array(
-  z.object({ serverUrl: z.string(), serverName: z.string() }),
-);
+const ServerModel = z.object({
+  id: z.string(),
+  serverUrl: z.string(),
+  serverName: z.string(),
+});
+
+const ServersModel = z.array(ServerModel);
 
 const ProfileModel = z.object({
   username: z.string(),
@@ -40,6 +45,7 @@ const use_setup = suspended(async (session: Session) => {
     servers: servers.map(
       (s) =>
         new ServerEntry({
+          id: s.id,
           server_url: s.serverUrl,
           server_name: s.serverName,
         }),
@@ -59,6 +65,7 @@ export const MeProvider = (props: React.PropsWithChildren) => {
 
   const [servers, set_servers] = React.useState(initial.servers);
   const [profile, set_profile] = React.useState(initial.profile);
+  const router = useRouter();
 
   const ctx: MeContext = React.useMemo(
     () => ({
@@ -83,7 +90,7 @@ export const MeProvider = (props: React.PropsWithChildren) => {
         );
       },
       add_server: async (server_url, server_name, invite_token) => {
-        await send({
+        const server = await send({
           path: "/me/servers",
           base: AUTH_BASE_URL,
           method: "POST",
@@ -93,9 +100,15 @@ export const MeProvider = (props: React.PropsWithChildren) => {
             serverName: server_name,
             inviteToken: invite_token,
           },
+          expect: ServerModel,
         });
 
-        set_servers([...servers, new ServerEntry({ server_url, server_name })]);
+        set_servers([
+          ...servers,
+          new ServerEntry({ id: server.id, server_name, server_url }),
+        ]);
+
+        router.push("/servers");
       },
     }),
     [servers, set_servers, profile, set_profile, session],

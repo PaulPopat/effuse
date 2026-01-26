@@ -7,6 +7,7 @@ public interface IEnvService
   string JwtIssuer { get; }
   string UserInterfaceOrigin { get; }
   string ServerUrl { get; }
+  string ServerName { get; }
   string EffuseUrl { get; }
 }
 

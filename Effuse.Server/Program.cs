@@ -1,4 +1,3 @@
-using System.Runtime.Loader;
 using Effuse.Core.Integrations;
 using Effuse.Server.Authorisation;
 using Effuse.Server.Errors;
