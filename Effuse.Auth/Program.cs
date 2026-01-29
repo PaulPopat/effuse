@@ -92,4 +92,4 @@ var app = builder.Build();
 app.UseCors(Cors.EffuseOrigins);
 app.MapControllers();
 
-app.Run();
+app.Run("http://localhost:8080");

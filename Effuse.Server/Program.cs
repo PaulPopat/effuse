@@ -86,4 +86,4 @@ app.MapControllers();
 
 await app.Services.GetRequiredService<DefaultInviter>().CreateStartupInvite();
 
-app.Run();
+app.Run("http://localhost:8082");

@@ -24,4 +24,11 @@ export class Role {
   get Permissions() {
     return this.#props.permission;
   }
+
+  WithPermission(permission: RolePermission) {
+    return new Role({
+      ...this.#props,
+      permission: [...this.#props.permission, permission],
+    });
+  }
 }

@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     margin("medium", "none"),
     shadowed(),
     center("row"),
-    { width: "100%" },
   ),
   button_small: v(padding("medium")),
   button_text: t(text("medium")),

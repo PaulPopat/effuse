@@ -31,7 +31,7 @@ public class UserRepository
         });
 
         var messageBuilder = new StringBuilder(env.VerificationEmailBody);
-        messageBuilder.Replace("$EFFUSE_BASE", env.EffuseUrl);
+        messageBuilder.Replace("$EFFUSE_BASE", env.UserInterfaceOrigin);
         messageBuilder.Replace("$TOKEN", id.ToString());
         messageBuilder.Replace("$EMAIL", email);
 
@@ -47,8 +47,12 @@ public class UserRepository
 
     public async Task<User> CreateUser(CreateUserProps props)
     {
-        var staged = await db.Query(StagedUserRow.Table).Select("*").Where("email", props.Email).SafeFirstOrDefault<StagedUserRow>();
-        if (staged == null || staged.id != props.Verification)
+        var staged = await db
+            .Query(StagedUserRow.Table)
+            .Select("*")
+            .Where("email", props.Email)
+            .SafeGet<StagedUserRow>();
+        if (staged == null || !staged.Any(s => s.id == props.Verification))
         {
             throw new UnauthorisedError("CreateUser", "InvalidVerification");
         }

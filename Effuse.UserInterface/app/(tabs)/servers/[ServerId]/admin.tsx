@@ -1,14 +1,9 @@
 import { IconButton } from "@/components/atoms/button";
 import { Radio, RadioOption, TextInput } from "@/components/atoms/input";
-import {
-  Container,
-  Divider,
-  ListGroup,
-  Row,
-  RowFill,
-} from "@/components/atoms/layout";
+import { Container, Divider, Row, RowFill } from "@/components/atoms/layout";
 import { Card, InvisibleCard } from "@/components/atoms/panel";
 import { Heading, Paragraph } from "@/components/atoms/typography";
+import { Accordion } from "@/components/molecules/accordion";
 import {
   FormControl,
   FormError,
@@ -17,14 +12,19 @@ import {
 } from "@/components/molecules/form";
 import { use_server_management } from "@/state/server-management";
 import { ThemeColour } from "@/theme";
-import { MessageSquare, MicVocal, Trash } from "lucide-react-native";
+import { MessageSquare, MicVocal, Trash, User } from "lucide-react-native";
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import z from "zod";
 
 const CreateChannelForm = z.object({
   channel: z.enum(["voice", "message"]),
   name: z.string(),
+});
+
+const AddPermissionForm = z.object({
+  action: z.string(),
+  resource: z.string(),
 });
 
 const ChannelTypeOptions: Array<RadioOption> = [
@@ -94,6 +94,61 @@ export default function () {
             </SubmitButton>
           </FormProvider>
         </Card>
+        <InvisibleCard padding="large">
+          <Heading level="1" content="light_a0">
+            Roles
+          </Heading>
+          <Accordion>
+            {server.roles.map((r, i) => (
+              <Accordion.Item
+                key={r.Id}
+                title={<Paragraph content="light_a0">{r.Name}</Paragraph>}
+              >
+                {r.Permissions.map((p) => (
+                  <Row key={[p.Action, p.Resource].join("-")}>
+                    <RowFill>
+                      <Paragraph content="light_a0">
+                        Action: {p.Action}
+                      </Paragraph>
+                    </RowFill>
+                    <RowFill>
+                      <Paragraph content="light_a0">
+                        Resource: {p.Resource}
+                      </Paragraph>
+                    </RowFill>
+                  </Row>
+                ))}
+                <Divider colour="surface_a40" spaced />
+                <Heading level="2" content="light_a0">
+                  Add a Permission
+                </Heading>
+                <FormProvider
+                  schema={AddPermissionForm}
+                  submit={async (v) =>
+                    server.add_permission(r, v.action, v.resource)
+                  }
+                >
+                  <FormError>
+                    There was a problem adding the permission.
+                  </FormError>
+                  <FormControl name="action" as={TextInput} auto_complete="off">
+                    Action
+                  </FormControl>
+                  <FormControl
+                    name="resource"
+                    as={TextInput}
+                    auto_complete="off"
+                  >
+                    Resource
+                  </FormControl>
+                  <SubmitButton backdrop="primary_a40" content="dark_a0">
+                    Add
+                  </SubmitButton>
+                </FormProvider>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </InvisibleCard>
       </Container>
     </ScrollView>
   );
