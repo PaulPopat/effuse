@@ -23,7 +23,10 @@ export default function RootLayout() {
             <Card direction="row">
               <IconLink
                 icon={TvMinimal}
-                href={`/servers/${ServerId}/channels`}
+                href={{
+                  pathname: "/servers/[ServerId]/channels",
+                  params: { ServerId: ServerId.toString() },
+                }}
                 colour="light_a0"
                 hover="primary_a50"
               >
@@ -31,7 +34,10 @@ export default function RootLayout() {
               </IconLink>
               <IconLink
                 icon={Settings}
-                href={`/servers/${ServerId}/admin`}
+                href={{
+                  pathname: "/servers/[ServerId]/admin",
+                  params: { ServerId: ServerId.toString() },
+                }}
                 colour="light_a0"
                 hover="primary_a50"
               >

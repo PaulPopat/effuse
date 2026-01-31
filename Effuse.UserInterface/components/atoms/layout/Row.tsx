@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export type RowProps = React.PropsWithChildren & {
+  direction?: "row" | "column";
   align?: "centre" | "top" | "bottom";
   gap?: "small" | "medium" | "large" | "none";
 };
@@ -18,7 +19,10 @@ export const Row = (props: RowProps) => {
     <View
       style={[
         styles.row,
-        { alignItems: alignments[props.align ?? "centre"] },
+        {
+          alignItems: alignments[props.align ?? "centre"],
+          flexDirection: props.direction ?? "row",
+        },
         gap(props.gap ?? "none"),
       ]}
     >
@@ -30,7 +34,6 @@ export const Row = (props: RowProps) => {
 const styles = StyleSheet.create({
   row: {
     display: "flex",
-    flexDirection: "row",
     justifyContent: "flex-start",
     width: "100%",
   },

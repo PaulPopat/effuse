@@ -2,6 +2,7 @@ import {
   backdrop,
   center,
   content,
+  gap,
   margin,
   padding,
   shadowed,
@@ -10,31 +11,41 @@ import {
   ThemeColour,
   v,
 } from "@/theme";
+import { Href, Link } from "expo-router";
 import { LucideIcon } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
 export type ButtonProps = React.PropsWithChildren & {
-  press: () => void;
   backdrop: ThemeColour;
   content: ThemeColour;
   small?: boolean;
   loading?: boolean;
   icon?: LucideIcon;
-};
+  any_children?: boolean;
+} & (
+    | {
+        press: () => unknown;
+      }
+    | {
+        href: Href;
+      }
+  );
 
 export const Button = (props: ButtonProps) => {
-  return (
+  const result = (
     <Pressable
-      style={[
+      style={v(
         styles.button,
         backdrop(props.backdrop),
-        props.small ? styles.button_small : null,
-      ]}
-      onPress={props.press}
+        props.small ? styles.button_small : {},
+      )}
+      onPress={"press" in props ? props.press : undefined}
     >
       {props.loading ? (
         <ActivityIndicator color={ThemeColour[props.content]} />
+      ) : props.any_children ? (
+        props.children
       ) : (
         <Text style={[styles.button_text, content(props.content)]}>
           {props.children}
@@ -42,14 +53,25 @@ export const Button = (props: ButtonProps) => {
       )}
     </Pressable>
   );
+
+  if ("href" in props) {
+    return (
+      <Link href={props.href} asChild>
+        {result}
+      </Link>
+    );
+  }
+
+  return result;
 };
 
 const styles = StyleSheet.create({
   button: v(
-    padding("large", "medium"),
+    padding("medium", "medium"),
     margin("medium", "none"),
     shadowed(),
-    center("row"),
+    center("column"),
+    gap("medium"),
   ),
   button_small: v(padding("medium")),
   button_text: t(text("medium")),

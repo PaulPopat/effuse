@@ -9,7 +9,6 @@ import {
   SubmitButton,
 } from "@/components/molecules/form";
 import { use_auth } from "@/state";
-import { useRouter } from "expo-router";
 import z from "zod";
 
 const Form = z.object({
@@ -18,7 +17,6 @@ const Form = z.object({
 
 export default function () {
   const auth = use_auth();
-  const router = useRouter();
 
   return (
     <Container full_height>
@@ -27,12 +25,7 @@ export default function () {
       </Heading>
       <Row>
         <RowFill />
-        <Button
-          backdrop="info_a20"
-          content="surface_a00"
-          press={() => router.push("/login")}
-          small
-        >
+        <Button backdrop="info_a20" content="surface_a00" href="/login" small>
           Login
         </Button>
       </Row>
