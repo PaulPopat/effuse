@@ -1,4 +1,4 @@
-import { center, gap, ThemeColour, v } from "@/theme";
+import { center, margin, ThemeColour, v } from "@/theme";
 import { LucideIcon } from "lucide-react-native";
 import React from "react";
 import { Pressable } from "react-native";
@@ -18,8 +18,8 @@ export const IconButton = (props: IconButtonProps) => {
 
   return (
     <Pressable
-      style={v(center("row"), gap("medium"))}
-      onPress={() => props.press}
+      style={v(center("row"), margin("medium"))}
+      onPress={props.press}
       onHoverIn={() => set_hovering(true)}
       onHoverOut={() => set_hovering(false)}
     >

@@ -21,7 +21,7 @@ export const FormProvider = <T extends Record<string, FormValue>>(
   });
 
   const value = React.useMemo(
-    () => ({ ...raw_value, ...props.initial }),
+    () => ({ ...props.initial, ...raw_value }),
     [props.initial, raw_value],
   );
 

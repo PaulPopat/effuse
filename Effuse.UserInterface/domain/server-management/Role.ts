@@ -3,7 +3,7 @@ import { RolePermission } from "./RolePermission";
 export type RoleProps = {
   id: string;
   name: string;
-  permission: Array<RolePermission>;
+  permissions: Array<RolePermission>;
 };
 
 export class Role {
@@ -22,13 +22,13 @@ export class Role {
   }
 
   get Permissions() {
-    return this.#props.permission;
+    return this.#props.permissions;
   }
 
   WithPermission(permission: RolePermission) {
     return new Role({
       ...this.#props,
-      permission: [...this.#props.permission, permission],
+      permissions: [...this.#props.permissions, permission],
     });
   }
 }

@@ -6,7 +6,7 @@ import { send } from "@/utils/api";
 import { ChannelModel } from "./ChannelModel";
 import { create_channel } from "./create_channel";
 import { RoleModel } from "./RoleModel";
-import { RolePermission } from "@/domain/server-management";
+import { Role, RolePermission } from "@/domain/server-management";
 
 export type ServerManagementProviderProps = React.PropsWithChildren & {
   base_url: string;
@@ -35,19 +35,48 @@ export const ServerManagementProvider = (props: React.PropsWithChildren) => {
 
         set_channels([...channels, create_channel(result)]);
       },
-      add_permission: async (role, action, resource) => {
-        await send({
-          path: `/roles/${role.Id}`,
+      create_role: async (name, permissions) => {
+        const role = await send({
+          path: `/roles`,
           base: session.BaseUrl,
-          method: "PUT",
+          method: "POST",
           body: {
-            name: role.Name,
+            name: name,
             permissions: [
-              ...role.Permissions.map((p) => ({
+              ...permissions.map((p) => ({
                 action: p.Action,
                 resource: p.Resource,
               })),
-              { action, resource },
+            ],
+          },
+          expect: RoleModel,
+          token: session.AccessToken,
+        });
+
+        set_roles((r) => [
+          ...r,
+          new Role({
+            id: role.id,
+            name: role.name,
+            permissions: role.permissions.map(
+              (p) =>
+                new RolePermission({ action: p.action, resource: p.resource }),
+            ),
+          }),
+        ]);
+      },
+      update_role: async (id, name, permissions) => {
+        await send({
+          path: `/roles/${id}`,
+          base: session.BaseUrl,
+          method: "PUT",
+          body: {
+            name: name,
+            permissions: [
+              ...permissions.map((p) => ({
+                action: p.Action,
+                resource: p.Resource,
+              })),
             ],
           },
           expect: RoleModel,
@@ -55,11 +84,7 @@ export const ServerManagementProvider = (props: React.PropsWithChildren) => {
         });
 
         set_roles((r) =>
-          r.map((r) =>
-            r.Id === role.Id
-              ? role.WithPermission(new RolePermission({ action, resource }))
-              : role,
-          ),
+          r.map((r) => (r.Id === id ? new Role({ id, name, permissions }) : r)),
         );
       },
     }),

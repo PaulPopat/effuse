@@ -41,7 +41,7 @@ export const use_setup = suspended(async (session: ServerSession) => {
         new Role({
           id: r.id,
           name: r.name,
-          permission: r.permissions.map(
+          permissions: r.permissions.map(
             (p) =>
               new RolePermission({ action: p.action, resource: p.resource }),
           ),

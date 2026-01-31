@@ -1,9 +1,9 @@
-import { v, margin, center, padding, gap, PaddingAmount } from "@/theme";
+import { v, center, padding, gap, PaddingAmount } from "@/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
 const styles = StyleSheet.create({
-  card: v(margin("medium"), gap("large")),
+  card: v(gap("large")),
 });
 
 export type InvisibleCardProps = React.PropsWithChildren & {

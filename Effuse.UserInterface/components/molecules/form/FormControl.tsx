@@ -26,9 +26,7 @@ export const FormControl = <T extends FormControlFieldProps>(
   const [should_validate, set_should_validate] = React.useState(false);
   const show_errors = ctx.submitted || should_validate;
 
-  const validation = ctx
-    .validation(props.name)
-    ?.filter((v) => v.path.join(".") === props.name);
+  const validation = ctx.validation(props.name);
   const invalid = show_errors && !!validation?.length;
 
   return (

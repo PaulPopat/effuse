@@ -1,4 +1,4 @@
-import { backdrop, padding, v } from "@/theme";
+import { backdrop, gap, padding, v } from "@/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -20,10 +20,15 @@ export const Container = (props: ContainerProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: v(padding("medium"), backdrop("surface_a00"), {
-    maxWidth: 750,
-    margin: "auto",
-    width: "100%",
-  }),
+  container: v(
+    padding("medium"),
+    backdrop("surface_a00"),
+    {
+      maxWidth: 750,
+      margin: "auto",
+      width: "100%",
+    },
+    gap("large"),
+  ),
   container_full: { height: "100%" },
 });

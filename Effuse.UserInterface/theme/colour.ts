@@ -97,3 +97,9 @@ export function shadowed(colour?: ThemeColour) {
     borderRadius: 4,
   };
 }
+
+export function rounded() {
+  return {
+    borderRadius: 4,
+  };
+}

@@ -12,7 +12,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 const styles = StyleSheet.create({
-  card: v(backdrop("surface_a10"), margin("medium"), shadowed(), gap("large")),
+  card: v(backdrop("surface_a10"), shadowed(), gap("large")),
 });
 
 export type CardProps = React.PropsWithChildren & {

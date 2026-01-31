@@ -4,7 +4,7 @@ import uuid from "react-native-uuid";
 import { AccordionContext } from "./AccordionContext";
 import { Row, RowFill, SlideDown } from "@/components/atoms/layout";
 import { ChevronDownCircle, ChevronUpCircle } from "lucide-react-native";
-import { backdrop, margin, padding, shadowed, ThemeColour, v } from "@/theme";
+import { backdrop, margin, padding, rounded, ThemeColour, v } from "@/theme";
 
 export type AccordionItemProps = React.PropsWithChildren & {
   title: React.ReactNode;
@@ -25,8 +25,8 @@ export const AccordionItem = (props: AccordionItemProps) => {
         style={v(
           backdrop(props.title_backdrop ?? "surface_a10"),
           padding("medium", "large"),
-          shadowed(),
           margin("medium", "none"),
+          rounded(),
           { width: "100%" },
         )}
       >
